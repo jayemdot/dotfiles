@@ -39,17 +39,24 @@ Stow creates symlinks in `$HOME` pointing into this repo. For example, `zsh/.zsh
 
 ## Restoring a new machine
 
+The repo ships two scripts:
+
+- `bootstrap.sh` — runs on a clean macOS. Installs Homebrew + Xcode CLT, installs `gh`, runs `gh auth login` (interactive), clones this private repo, and hands off to `setup.sh`.
+- `setup.sh` — runs from inside an already-cloned repo. Idempotent: `brew bundle`, Volta, TPM, then `stow bat git ssh tmux vim zsh`.
+
+One-shot from a fresh terminal (recommended):
+
 ```sh
-# Install Homebrew packages
-brew bundle --file brew/.Brewfile
-
-# Deploy all dotfiles
-stow bat git ssh tmux vim zsh
-
-# Install tmux plugin manager and plugins
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-tmux source ~/.tmux.conf   # then press prefix + I inside a tmux session
+bash <(curl -fsSL https://gist.githubusercontent.com/jayemdot/a5c4129e41cf20af06b6fbe2866d0248/raw/bootstrap.sh)
 ```
+
+Or, if the repo is already cloned:
+
+```sh
+cd ~/dotfiles && ./setup.sh
+```
+
+After `setup.sh` finishes: `exec zsh`, then start tmux and press `prefix + I` to install tmux plugins.
 
 ## Key configuration notes
 

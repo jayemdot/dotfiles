@@ -1,6 +1,7 @@
 syntax on
 colorscheme monokai
 set encoding=utf-8
+set number
 set fileencodings=utf-8,iso-2022-jp,ucs-bom,sjis,euc-jp,cp932,default,latin1
 " Emacsキーバインド
 inoremap <silent> <C-p> <Up>

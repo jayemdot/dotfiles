@@ -53,7 +53,7 @@ alias ll='ls -al'
 alias bs='brew search'
 alias bi='brew info'
 alias bcat='bat'
-alias brltst='brew update && brew upgrade && brew cleanup && brew doctor'
+alias brltst='brew update && brew upgrade && brew cleanup && brew doctor && mas update'
 alias brcl='brew cleanup --prune=all'
 alias o='open .'
 alias here='pwd | pbcopy'
@@ -65,11 +65,9 @@ PROMPT=' %B%F{blue}%~%f%b%F{yellow}${vcs_info_msg_0_}%f'$'\n''%B%(?,%F{green},%F
 typeset -U path PATH
 export PATH="/opt/homebrew/opt/git:$PATH"
 export PATH="/opt/homebrew/opt/php:$PATH"
-
 export VOLTA_HOME="$HOME/.volta"
 export PATH="$VOLTA_HOME/bin:$PATH"
 export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
-. "$HOME/.local/bin/env"
 export PATH="/Library/TeX/texbin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 
@@ -82,6 +80,9 @@ docx2md() { pandoc -s "$1" --wrap=none --extract-media=media -t gfm -o "${1%.doc
 # fzf (Ctrl-R: 履歴検索, Ctrl-T: ファイル検索, Alt-C: ディレクトリ移動)
 command -v fzf &>/dev/null && eval "$(fzf --zsh)"
 export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
+
+# uv auto complete
+eval "$(uv generate-shell-completion zsh)"
 
 # tmux auto-start
 if [[ $- == *i* ]] && [[ -z "$TMUX" ]] && command -v tmux &>/dev/null; then

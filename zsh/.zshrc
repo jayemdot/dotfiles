@@ -85,6 +85,13 @@ export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
 # uv auto complete
 eval "$(uv generate-shell-completion zsh)"
 
+# Refresh VS Code env vars from tmux so Claude Code's IDE integration
+# tracks the current VS Code window's SSE port across reattaches.
+claude() {
+  [[ -n "$TMUX" ]] && eval "$(tmux show-environment -s 2>/dev/null)"
+  command claude "$@"
+}
+
 # tmux auto-start
 if [[ $- == *i* ]] && [[ -z "$TMUX" ]] && command -v tmux &>/dev/null; then
   tmux attach || tmux new

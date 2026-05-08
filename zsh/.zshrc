@@ -71,6 +71,7 @@ export PATH="$VOLTA_HOME/bin:$PATH"
 export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
 . "$HOME/.local/bin/env"
 export PATH="/Library/TeX/texbin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
 
 # Pandoc
 alias html2md='pandoc -f html-native_divs-native_spans -t markdown_strict --wrap=none --strip-comments'

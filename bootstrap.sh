@@ -8,7 +8,6 @@
 #   2. gh CLI + GitHub authentication
 #   3. Clones this private dotfiles repo
 #   4. Hands off to setup.sh
-# test comment
 
 set -euo pipefail
 

@@ -29,6 +29,10 @@ else
   log "TPM already installed — skipping"
 fi
 
+# --- git hooks ---------------------------------------------------------------
+log "Enabling repo-local git hooks (.githooks)"
+git config --local core.hooksPath .githooks
+
 # --- stow --------------------------------------------------------------------
 log "Stowing dotfiles into \$HOME"
 stow bat git ssh tmux vim zsh

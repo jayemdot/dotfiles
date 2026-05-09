@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Auto-sync bootstrap.sh to its public Gist whenever it changes in a commit.
+# Enabled per-repo via:  git config --local core.hooksPath .githooks
+# (setup.sh does this for you on a fresh clone.)
+
+set -euo pipefail
+
+GIST_ID="a5c4129e41cf20af06b6fbe2866d0248"
+TARGET_FILE="bootstrap.sh"
+
+# Compare against parent commit. Skip if this is the very first commit.
+if ! git rev-parse HEAD~1 &>/dev/null; then
+  exit 0
+fi
+
+# Bail out if bootstrap.sh wasn't part of this commit.
+if ! git diff --name-only HEAD~1 HEAD | grep -qx "$TARGET_FILE"; then
+  exit 0
+fi
+
+if ! command -v gh &>/dev/null; then
+  echo "post-commit: gh CLI not found — skipping Gist sync" >&2
+  exit 0
+fi
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+echo "post-commit: syncing $TARGET_FILE to Gist $GIST_ID"
+gh gist edit "$GIST_ID" -f "$TARGET_FILE" "$REPO_ROOT/$TARGET_FILE"

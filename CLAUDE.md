@@ -58,6 +58,12 @@ cd ~/dotfiles && ./setup.sh
 
 After `setup.sh` finishes: `exec zsh`, then start tmux and press `prefix + I` to install tmux plugins.
 
+## Gist sync (bootstrap.sh)
+
+`bootstrap.sh` is hosted both in this repo (source of truth) and as a public Gist (`a5c4129e41cf20af06b6fbe2866d0248`) so that a fresh macOS can `curl | bash` it before the repo is cloned.
+
+A `post-commit` hook in `.githooks/post-commit` automatically pushes any changes to `bootstrap.sh` up to the Gist. The hook is enabled by `setup.sh` via `git config --local core.hooksPath .githooks`. No manual sync command needed.
+
 ## Key configuration notes
 
 - **Shell**: zsh with `zsh-autosuggestions` and `zsh-syntax-highlighting` (installed via Homebrew at `/opt/homebrew/share/`).

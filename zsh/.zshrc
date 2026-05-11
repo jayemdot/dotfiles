@@ -24,7 +24,7 @@ zstyle ':vcs_info:git:*' formats ' (%b)'
 setopt prompt_subst
 
 # set vim for the editor
-export EDITOR=vim
+export EDITOR="code --wait --new-window"
 
 # disable flow control
 setopt no_flow_control
@@ -66,11 +66,18 @@ PROMPT=' %B%F{blue}%~%f%b%F{yellow}${vcs_info_msg_0_}%f'$'\n''%B%(?,%F{green},%F
 typeset -U path PATH
 export PATH="/opt/homebrew/opt/git:$PATH"
 export PATH="/opt/homebrew/opt/php:$PATH"
-export VOLTA_HOME="$HOME/.volta"
-export PATH="$VOLTA_HOME/bin:$PATH"
+export PATH="/opt/homebrew/opt/curl/bin:$PATH"
 export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
 export PATH="/Library/TeX/texbin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
+
+# for compilers to find curl
+export LDFLAGS="-L/opt/homebrew/opt/curl/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/curl/include"
+
+# forpkgconf to find curl
+export PKG_CONFIG_PATH="/opt/homebrew/opt/curl/lib/pkgconfig"
+
 
 # Pandoc
 alias html2md='pandoc -f html-native_divs-native_spans -t markdown_strict --wrap=none --strip-comments'
@@ -81,6 +88,9 @@ docx2md() { pandoc -s "$1" --wrap=none --extract-media=media -t gfm -o "${1%.doc
 # fzf (Ctrl-R: 履歴検索, Ctrl-T: ファイル検索, Alt-C: ディレクトリ移動)
 command -v fzf &>/dev/null && eval "$(fzf --zsh)"
 export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
+
+# mise (Node/Python/etc version manager)
+command -v mise &>/dev/null && eval "$(mise activate zsh)"
 
 # uv auto complete
 eval "$(uv generate-shell-completion zsh)"

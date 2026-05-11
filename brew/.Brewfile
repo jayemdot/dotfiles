@@ -5,6 +5,8 @@ brew "bat"
 brew "cloc"
 # General-purpose data compression with high compression ratio
 brew "xz"
+# Get a file from an HTTP, HTTPS or FTP server
+brew "curl"
 # Secure runtime for JavaScript and TypeScript
 brew "deno"
 # Play, record, convert, and stream select audio and video codecs
@@ -15,8 +17,12 @@ brew "fzf"
 brew "gh"
 # Distributed revision control system
 brew "git"
+# Improved top (interactive process viewer)
+brew "htop"
 # Mac App Store command-line interface
 brew "mas"
+# Polyglot runtime manager (asdf rust clone)
+brew "mise"
 # Optimized BLAS library
 brew "openblas"
 # Development kit for the Java programming language
@@ -61,6 +67,8 @@ brew "yt-dlp"
 brew "zsh-autosuggestions"
 # Fish shell like syntax highlighting for zsh
 brew "zsh-syntax-highlighting"
+# 3D creation suite
+cask "blender"
 # Anthropic's official Claude AI desktop app
 cask "claude"
 # AI-powered translator
@@ -89,6 +97,8 @@ cask "microsoft-excel"
 cask "microsoft-powerpoint"
 # Word processor
 cask "microsoft-word"
+# Knowledge base that works on top of a local folder of plain text Markdown files
+cask "obsidian"
 # Control your tools with a few keystrokes
 cask "raycast"
 # Email client
@@ -107,3 +117,4 @@ mas "Keynote", id: 361285480
 mas "LINE", id: 539883307
 mas "Numbers", id: 361304891
 mas "Pages", id: 361309726
+mas "Xcode", id: 497799835

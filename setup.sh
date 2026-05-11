@@ -13,14 +13,6 @@ log() { printf "\033[1;34m==> %s\033[0m\n" "$*"; }
 log "Installing Homebrew packages from Brewfile"
 brew bundle --file brew/.Brewfile
 
-# --- Volta -------------------------------------------------------------------
-if ! command -v volta &>/dev/null && [[ ! -d "$HOME/.volta" ]]; then
-  log "Installing Volta"
-  curl -fsSL https://get.volta.sh | bash -s -- --skip-setup
-else
-  log "Volta already installed — skipping"
-fi
-
 # --- tmux plugin manager -----------------------------------------------------
 if [[ ! -d "$HOME/.tmux/plugins/tpm" ]]; then
   log "Installing tmux plugin manager (TPM)"
@@ -34,8 +26,15 @@ log "Enabling repo-local git hooks (.githooks)"
 git config --local core.hooksPath .githooks
 
 # --- stow --------------------------------------------------------------------
+# Run stow BEFORE mise install so ~/.config/mise/config.toml is in place.
 log "Stowing dotfiles into \$HOME"
-stow bat git ssh tmux vim zsh
+stow bat git mise ssh tmux vim zsh
+
+# --- mise tools --------------------------------------------------------------
+# Installs everything pinned in mise/.config/mise/config.toml (Node, codex,
+# gemini-cli, ...). Idempotent — already-installed versions are skipped.
+log "Installing mise-managed tools"
+mise install
 
 log "Setup complete."
 cat <<'EOF'

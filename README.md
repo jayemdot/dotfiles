@@ -34,7 +34,7 @@ tmux                     # tmux を起動
 | `setup.sh` | clone 済み repo から実行する冪等なセットアップ |
 | `.githooks/post-commit` | `bootstrap.sh` の変更を Gist に自動同期 |
 | `brew/.Brewfile` | Homebrew パッケージ・cask・Mac App Store アプリ |
-| `bat/`, `git/`, `ssh/`, `tmux/`, `vim/`, `zsh/` | Stow パッケージ。各ディレクトリが `$HOME` 配下のパスを反映 |
+| `bat/`, `git/`, `mise/`, `ssh/`, `tmux/`, `vim/`, `zsh/` | Stow パッケージ。各ディレクトリが `$HOME` 配下のパスを反映 |
 
 ### Stow パッケージマップ
 
@@ -43,6 +43,7 @@ tmux                     # tmux を起動
 | `bat/` | `~/.config/bat/config` |
 | `brew/` | `~/.Brewfile` |
 | `git/` | `~/.gitconfig` |
+| `mise/` | `~/.config/mise/config.toml` |
 | `ssh/` | `~/.ssh/config` |
 | `tmux/` | `~/.tmux.conf` |
 | `vim/` | `~/.vimrc`, `~/.vim/` |
@@ -61,11 +62,13 @@ tmux                     # tmux を起動
 ### `setup.sh`
 clone 済みの repo から実行する。冪等なので何度走らせても安全。
 
-1. `brew bundle --file brew/.Brewfile` で全パッケージ入れる
-2. Volta (Node version manager) をインストール
-3. TPM (tmux plugin manager) を clone
-4. repo-local git hooks を有効化 (`core.hooksPath = .githooks`)
-5. `stow bat git ssh tmux vim zsh` でシンボリックリンク作成
+1. `brew bundle --file brew/.Brewfile` で全パッケージ入れる (`mise` 本体含む)
+2. TPM (tmux plugin manager) を clone
+3. repo-local git hooks を有効化 (`core.hooksPath = .githooks`)
+4. `stow bat git mise ssh tmux vim zsh` でシンボリックリンク作成
+5. `mise install` で `mise/.config/mise/config.toml` にピン留めされたツール (Node、`codex`、`gemini-cli` など) をまとめてインストール
+
+stow は `mise install` より先に走ります。これは mise が `~/.config/mise/config.toml` を読むタイミングで stow 経由の symlink が存在している必要があるためです。
 
 ## GitHub Gist について
 

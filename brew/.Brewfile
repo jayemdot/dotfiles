@@ -3,14 +3,20 @@ tap "kegworks-app/kegworks"
 brew "bat"
 # Statistics utility to count lines of code
 brew "cloc"
+# Dependency manager for Cocoa projects
+brew "cocoapods"
 # General-purpose data compression with high compression ratio
 brew "xz"
 # Get a file from an HTTP, HTTPS or FTP server
 brew "curl"
 # Secure runtime for JavaScript and TypeScript
 brew "deno"
+# Simple, fast and user-friendly alternative to find
+brew "fd"
 # Play, record, convert, and stream select audio and video codecs
-brew "ffmpeg"
+brew "ffmpeg", link: false
+# Play, record, convert, and stream many audio and video codecs
+brew "ffmpeg-full", link: true
 # Command-line fuzzy finder written in Go
 brew "fzf"
 # GitHub command-line tool
@@ -19,8 +25,18 @@ brew "gh"
 brew "git"
 # Improved top (interactive process viewer)
 brew "htop"
+# Tools and libraries to manipulate images in select formats
+brew "imagemagick", link: false
+# Tools and libraries to manipulate images in many formats
+brew "imagemagick-full", link: true
+# Lightweight and flexible command-line JSON processor
+brew "jq"
+# Simple terminal UI for git commands
+brew "lazygit"
 # Mac App Store command-line interface
 brew "mas"
+# Terminal image, video, directory, and Markdown viewer
+brew "mcat"
 # Polyglot runtime manager (asdf rust clone)
 brew "mise"
 # Optimized BLAS library
@@ -33,6 +49,8 @@ brew "pandoc"
 brew "perl"
 # Package compiler and linker metadata toolkit
 brew "pkgconf"
+# Single-file executable tool for creating, reading and uploading PMTiles archives
+brew "pmtiles"
 # PDF rendering library (based on the xpdf-3.0 code base)
 brew "poppler"
 # Show ps output as a tree
@@ -45,8 +63,16 @@ brew "python-tk@3.11"
 brew "qpdf"
 # Software environment for statistical computing
 brew "r"
+# SVG rendering tool and library
+brew "resvg"
+# Search tool like grep and The Silver Searcher
+brew "ripgrep"
+# 7-Zip is a file archiver with a high compression ratio
+brew "sevenzip"
 # Organize software neatly under a single directory tree (e.g. /usr/local)
 brew "stow"
+# TUI-based PDF viewer
+brew "tdf"
 # User interface to the TELNET protocol
 brew "telnet"
 # Extremely fast LaTeX formatter written in Rust
@@ -61,8 +87,12 @@ brew "uv"
 brew "vim"
 # Internet file retriever
 brew "wget"
+# Blazing fast terminal file manager written in Rust, based on async I/O
+brew "yazi"
 # Feature-rich command-line audio/video downloader
 brew "yt-dlp"
+# Shell extension to navigate your filesystem faster
+brew "zoxide"
 # Fish-like fast/unobtrusive autosuggestions for zsh
 brew "zsh-autosuggestions"
 # Fish shell like syntax highlighting for zsh
@@ -73,12 +103,17 @@ cask "blender"
 cask "claude"
 # AI-powered translator
 cask "deepl"
+# App to build and share containerised applications and microservices
+cask "docker-desktop"
 cask "font-hackgen-nerd"
 cask "font-ricty-diminished"
+cask "font-symbols-only-nerd-font"
 # Desktop client for GitHub repositories
 cask "github"
 # Web browser
 cask "google-chrome"
+# Client for the Google Drive storage service
+cask "google-drive"
 # Japanese input software
 cask "google-japanese-ime"
 # Terminal emulator as alternative to Apple's Terminal app
@@ -97,6 +132,8 @@ cask "microsoft-excel"
 cask "microsoft-powerpoint"
 # Word processor
 cask "microsoft-word"
+# AI-powered translator
+cask "nani"
 # Knowledge base that works on top of a local folder of plain text Markdown files
 cask "obsidian"
 # Control your tools with a few keystrokes
@@ -118,3 +155,4 @@ mas "LINE", id: 539883307
 mas "Numbers", id: 361304891
 mas "Pages", id: 361309726
 mas "Xcode", id: 497799835
+uv "jupyterlab"

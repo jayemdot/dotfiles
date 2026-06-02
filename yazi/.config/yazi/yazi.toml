@@ -1,0 +1,11 @@
+[mgr]
+ratio = [0, 1, 2]
+show_hidden = true
+
+[plugin]
+prepend_previewers = [
+  # Render Markdown with mcat; everything else text/* falls through to bat.
+  { url = "*.md",       run = "mcat" },
+  { url = "*.markdown", run = "mcat" },
+  { mime = "text/*",    run = "bat"  },
+]

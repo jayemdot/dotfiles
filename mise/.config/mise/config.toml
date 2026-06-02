@@ -2,3 +2,4 @@
 node = "lts"
 "npm:@google/gemini-cli" = "latest"
 "npm:@openai/codex" = "latest"
+pnpm = "11.1.3"

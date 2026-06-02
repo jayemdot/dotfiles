@@ -1,0 +1,111 @@
+# Monokai theme for Yazi — palette from dotfiles/vim/.vim/colors/monokai.vim
+#
+#   s:black      #272822   s:white     #E8E8E3
+#   s:darkblack  #211F1C   s:lightblack #2D2E27
+#   s:lightgrey  #575b61   s:warmgrey  #75715E
+#   s:grey       #8F908A
+#   s:pink       #F92772   s:green     #A6E22D
+#   s:aqua       #66D9EF   s:yellow    #E6DB74
+#   s:orange     #FD9720   s:purple    #AE81FF
+
+[manager]
+cwd = { fg = "#66D9EF", bold = true }
+
+hovered         = { fg = "#211F1C", bg = "#A6E22D", bold = true }
+preview_hovered = { underline = true }
+
+find_keyword  = { fg = "#E6DB74", bold = true, italic = true }
+find_position = { fg = "#F92772", bold = true }
+
+marker_copied   = { fg = "#A6E22D", bg = "#A6E22D" }
+marker_cut      = { fg = "#F92772", bg = "#F92772" }
+marker_marked   = { fg = "#66D9EF", bg = "#66D9EF" }
+marker_selected = { fg = "#E6DB74", bg = "#E6DB74" }
+
+# TabLineSel: fg=darkblack bg=warmgrey bold / TabLine: fg=lightgrey
+tab_active   = { fg = "#211F1C", bg = "#75715E", bold = true }
+tab_inactive = { fg = "#575b61" }
+
+count_copied   = { fg = "#211F1C", bg = "#A6E22D", bold = true }
+count_cut      = { fg = "#211F1C", bg = "#F92772", bold = true }
+count_selected = { fg = "#211F1C", bg = "#E6DB74", bold = true }
+
+border_symbol = "│"
+border_style  = { fg = "#575b61" }
+
+[status]
+separator_open  = ""
+separator_close = ""
+# StatusLine: fg=black bg=lightgrey
+separator_style = { fg = "#575b61", bg = "#575b61" }
+
+mode_normal = { fg = "#211F1C", bg = "#A6E22D", bold = true }
+mode_select = { fg = "#211F1C", bg = "#66D9EF", bold = true }
+mode_unset  = { fg = "#211F1C", bg = "#FD9720", bold = true }
+
+progress_label  = { fg = "#E8E8E3", bold = true }
+progress_normal = { fg = "#66D9EF", bg = "#272822" }
+progress_error  = { fg = "#F92772", bg = "#272822" }
+
+# perm: type=aqua read=yellow write=pink exec=green sep=warmgrey
+perm_type  = { fg = "#66D9EF" }
+perm_read  = { fg = "#E6DB74" }
+perm_write = { fg = "#F92772" }
+perm_exec  = { fg = "#A6E22D" }
+perm_sep   = { fg = "#75715E" }
+
+[input]
+border   = { fg = "#FD9720" }
+title    = { fg = "#E8E8E3", bold = true }
+value    = { fg = "#E8E8E3" }
+selected = { fg = "#211F1C", bg = "#FD9720" }
+
+[select]
+border   = { fg = "#FD9720" }
+active   = { fg = "#A6E22D", bold = true }
+inactive = { fg = "#75715E" }
+
+[tasks]
+border  = { fg = "#FD9720" }
+title   = { fg = "#E8E8E3", bold = true }
+hovered = { fg = "#66D9EF", underline = true }
+
+[which]
+mask            = { bg = "#272822" }
+cand            = { fg = "#66D9EF" }
+rest            = { fg = "#75715E" }
+desc            = { fg = "#AE81FF" }
+separator_style = { fg = "#2D2E27" }
+
+[help]
+on      = { fg = "#AE81FF", bold = true }
+exec    = { fg = "#66D9EF" }
+desc    = { fg = "#75715E" }
+hovered = { fg = "#E8E8E3", bg = "#2D2E27", bold = true }
+footer  = { fg = "#211F1C", bg = "#75715E" }
+
+[filetype]
+rules = [
+  # Directory — s:aqua (Directory highlight in vim)
+  { mime = "inode/directory",   fg = "#66D9EF", bold = true },
+  # Executable — s:green
+  { mime = "application/x-executable",  fg = "#A6E22D", bold = true },
+  { mime = "application/x-mach-binary", fg = "#A6E22D", bold = true },
+  # Image — s:yellow
+  { mime = "image/*",           fg = "#E6DB74" },
+  # Video / Audio — s:purple
+  { mime = "video/*",           fg = "#AE81FF" },
+  { mime = "audio/*",           fg = "#AE81FF" },
+  # Archive — s:pink
+  { mime = "application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,lzo,compress,archive,cpio,arj,xar,ms-cab*}", fg = "#F92772" },
+  { mime = "application/x-{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,lzo,compress,archive,cpio,arj,xar,ms-cab*}", fg = "#F92772" },
+  # Document — s:orange
+  { mime = "application/pdf",   fg = "#FD9720" },
+  { mime = "application/{doc,rtf,vnd.*}", fg = "#FD9720" },
+  # Symlink — s:aqua italic
+  { mime = "inode/symlink",     fg = "#66D9EF", italic = true },
+  # Empty — s:warmgrey
+  { mime = "inode/x-empty",    fg = "#75715E" },
+  # Text — s:white
+  { mime = "text/*",            fg = "#E8E8E3" },
+]

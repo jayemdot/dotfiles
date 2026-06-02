@@ -24,7 +24,7 @@ zstyle ':vcs_info:git:*' formats ' (%b)'
 setopt prompt_subst
 
 # set vim for the editor
-export EDITOR="code --wait --new-window"
+export EDITOR="vim"
 
 # disable flow control
 setopt no_flow_control
@@ -58,6 +58,7 @@ alias brcl='brew cleanup --prune=all'
 alias brewdump='brew bundle dump --global --force --describe --no-vscode --no-npm'
 alias o='open .'
 alias here='pwd | pbcopy'
+alias tmuxsource='tmux source ~/.tmux.conf 2>&1'
 
 # prompt setting
 PROMPT=' %B%F{blue}%~%f%b%F{yellow}${vcs_info_msg_0_}%f'$'\n''%B%(?,%F{green},%F{red})%(!,#,>)%f%b '
@@ -106,3 +107,12 @@ claude() {
 if [[ $- == *i* ]] && [[ -z "$TMUX" ]] && command -v tmux &>/dev/null; then
   tmux attach || tmux new
 fi
+
+# Yazi recommended shell Wrapper
+function y() {
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+	command yazi "$@" --cwd-file="$tmp"
+	IFS= read -r -d '' cwd < "$tmp"
+	[ "$cwd" != "$PWD" ] && [ -d "$cwd" ] && builtin cd -- "$cwd"
+	command rm -f -- "$tmp"
+}

@@ -1,0 +1,6 @@
+# Override default preview scrolling (J/K = seek 5/-5) to scroll 1 line at a time.
+[mgr]
+prepend_keymap = [
+  { on = "J", run = "seek 1",  desc = "Scroll preview down 1 line" },
+  { on = "K", run = "seek -1", desc = "Scroll preview up 1 line" },
+]

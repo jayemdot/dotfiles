@@ -23,6 +23,12 @@ prepend_previewers = [
   { mime = "text/*",    run = "bat"  },
 ]
 
+# git.yazi: compute git status for files/dirs (rendered as signs in the list).
+prepend_fetchers = [
+  { url = "*",  run = "git", group = "git" },
+  { url = "*/", run = "git", group = "git" },
+]
+
 [opener]
 # Open in iTerm2's built-in browser (WKWebView) — gives a real PDF viewer with
 # zoom and page navigation. `iterm-browser` lives in the `bin` stow package.

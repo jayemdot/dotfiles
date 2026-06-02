@@ -36,6 +36,16 @@ stow bat bin git mise ssh tmux vim yazi zsh
 log "Installing mise-managed tools"
 mise install
 
+# --- yazi plugins ------------------------------------------------------------
+# Installs plugins pinned in yazi/.config/yazi/package.toml (e.g. the git
+# status plugin). `ya` ships with yazi (Homebrew). Idempotent.
+if command -v ya &>/dev/null; then
+  log "Installing yazi plugins (ya pkg install)"
+  ya pkg install
+else
+  log "ya (yazi) not found — skipping yazi plugin install"
+fi
+
 log "Setup complete."
 cat <<'EOF'
 

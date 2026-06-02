@@ -1,6 +1,11 @@
 .DS_Store
 .netrwhist
 .netrwbook
+
+# yazi plugins installed via `ya pkg` (restored by `ya pkg install` from
+# yazi/.config/yazi/package.toml). Hand-written plugins like bat.yazi /
+# mcat.yazi are tracked normally.
+yazi/.config/yazi/plugins/git.yazi/
 ssh/.ssh/id_ed25519
 ssh/.ssh/id_ed25519.pub
 ssh/.ssh/known_hosts

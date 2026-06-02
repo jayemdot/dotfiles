@@ -69,6 +69,7 @@ clone 済みの repo から実行する。冪等なので何度走らせても�
 3. repo-local git hooks を有効化 (`core.hooksPath = .githooks`)
 4. `stow bat bin git mise ssh tmux vim yazi zsh` でシンボリックリンク作成
 5. `mise install` で `mise/.config/mise/config.toml` にピン留めされたツール (Node、`codex`、`gemini-cli` など) をまとめてインストール
+6. `ya pkg install` で `yazi/.config/yazi/package.toml` にピン留めされた yazi プラグイン (git ステータス表示など) をインストール
 
 stow は `mise install` より先に走ります。これは mise が `~/.config/mise/config.toml` を読むタイミングで stow 経由の symlink が存在している必要があるためです。
 

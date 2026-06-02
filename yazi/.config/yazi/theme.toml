@@ -84,6 +84,24 @@ desc    = { fg = "#75715E" }
 hovered = { fg = "#E8E8E3", bg = "#2D2E27", bold = true }
 footer  = { fg = "#211F1C", bg = "#75715E" }
 
+# git.yazi status signs, VSCode-style letters + Monokai colors:
+#   U untracked/new (green)   M modified (orange)   A added/staged (green)
+#   D deleted (pink)          ! conflict (pink)     ignored hidden
+[git]
+untracked = { fg = "#A6E22D" }
+added     = { fg = "#A6E22D" }
+modified  = { fg = "#FD9720" }
+updated   = { fg = "#F92772", bold = true }
+deleted   = { fg = "#F92772" }
+ignored   = { fg = "#75715E" }
+
+untracked_sign = "U"
+added_sign     = "A"
+modified_sign  = "M"
+updated_sign   = "!"
+deleted_sign   = "D"
+ignored_sign   = ""
+
 [filetype]
 rules = [
   # Directory — s:aqua (Directory highlight in vim)

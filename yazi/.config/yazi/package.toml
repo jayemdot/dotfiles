@@ -1,7 +1,4 @@
-[[plugin.deps]]
-use = "yazi-rs/plugins:git"
-rev = "598cdb6"
-hash = "88e56a64b7ce7c4314427452343fef17"
-
+# git.yazi is vendored (tracked) with a local patch instead of managed here, so
+# `ya pkg install` won't overwrite it. Add other plugins below as usual.
 [flavor]
 deps = []

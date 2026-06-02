@@ -2,12 +2,16 @@ local M = {}
 
 function M:peek(job)
 	local start = job.skip + 1
-	local limit = job.area.h
+	-- `grid` draws a top + bottom border row, so leave room for 2 fewer lines.
+	local limit = math.max(1, job.area.h - 2)
 
 	local output, err = Command("bat")
 		:arg({
 			"--color=always",
-			"--style=numbers",
+			-- `changes` adds bat's git diff markers (+/~/-) in the gutter;
+			-- `grid` draws the vertical rule between line numbers and code.
+			-- bat finds the repo from the file's absolute path.
+			"--style=numbers,changes,grid",
 			"--theme=Monokai Extended Origin",
 			"--paging=never",
 			"--terminal-width=" .. job.area.w,

@@ -2,10 +2,36 @@
 ratio = [0, 1, 2]
 show_hidden = true
 
+[preview]
+# Built-in pdf/image previewers rasterize up to these pixel bounds, and yazi
+# never upscales — so the defaults (600x900) look small in a wide pane.
+# Bump them so PDF pages fill the preview pane. Run `yazi --clear-cache` after
+# changing these.
+# Retina iTerm2 panes are large in physical pixels, so render generously.
+# If a PDF page still doesn't fill the pane, raise these further; if page
+# turns feel slow, lower them. (max_height is the binding dim for portrait PDFs.)
+max_width    = 2000
+max_height   = 2800
+image_filter = "lanczos3"
+image_quality = 90
+
 [plugin]
 prepend_previewers = [
   # Render Markdown with mcat; everything else text/* falls through to bat.
   { url = "*.md",       run = "mcat" },
   { url = "*.markdown", run = "mcat" },
   { mime = "text/*",    run = "bat"  },
+]
+
+[opener]
+# Open in iTerm2's built-in browser (WKWebView) — gives a real PDF viewer with
+# zoom and page navigation. `iterm-browser` lives in the `bin` stow package.
+iterm-browser = [
+  { run = 'for f in "$@"; do iterm-browser "$f"; done', desc = "iTerm2 browser", block = true },
+]
+
+[open]
+prepend_rules = [
+  # Enter on a PDF opens it in the iTerm2 browser instead of Preview.app.
+  { mime = "application/pdf", use = "iterm-browser" },
 ]

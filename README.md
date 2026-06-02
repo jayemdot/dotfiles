@@ -34,13 +34,14 @@ tmux                     # tmux を起動
 | `setup.sh` | clone 済み repo から実行する冪等なセットアップ |
 | `.githooks/post-commit` | `bootstrap.sh` の変更を Gist に自動同期 |
 | `brew/.Brewfile` | Homebrew パッケージ・cask・Mac App Store アプリ |
-| `bat/`, `git/`, `mise/`, `ssh/`, `tmux/`, `vim/`, `yazi/`, `zsh/` | Stow パッケージ。各ディレクトリが `$HOME` 配下のパスを反映 |
+| `bat/`, `bin/`, `git/`, `mise/`, `ssh/`, `tmux/`, `vim/`, `yazi/`, `zsh/` | Stow パッケージ。各ディレクトリが `$HOME` 配下のパスを反映 |
 
 ### Stow パッケージマップ
 
 | ディレクトリ | リンク先 |
 |--------------|---------|
 | `bat/` | `~/.config/bat/config` |
+| `bin/` | `~/.local/bin/`（`iterm-browser` など） |
 | `brew/` | `~/.Brewfile` |
 | `git/` | `~/.gitconfig` |
 | `mise/` | `~/.config/mise/config.toml` |
@@ -66,7 +67,7 @@ clone 済みの repo から実行する。冪等なので何度走らせても�
 1. `brew bundle --file brew/.Brewfile` で全パッケージ入れる (`mise` 本体含む)
 2. TPM (tmux plugin manager) を clone
 3. repo-local git hooks を有効化 (`core.hooksPath = .githooks`)
-4. `stow bat git mise ssh tmux vim yazi zsh` でシンボリックリンク作成
+4. `stow bat bin git mise ssh tmux vim yazi zsh` でシンボリックリンク作成
 5. `mise install` で `mise/.config/mise/config.toml` にピン留めされたツール (Node、`codex`、`gemini-cli` など) をまとめてインストール
 
 stow は `mise install` より先に走ります。これは mise が `~/.config/mise/config.toml` を読むタイミングで stow 経由の symlink が存在している必要があるためです。

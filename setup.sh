@@ -28,7 +28,7 @@ git config --local core.hooksPath .githooks
 # --- stow --------------------------------------------------------------------
 # Run stow BEFORE mise install so ~/.config/mise/config.toml is in place.
 log "Stowing dotfiles into \$HOME"
-stow bat git mise ssh tmux vim yazi zsh
+stow bat bin git mise ssh tmux vim yazi zsh
 
 # --- mise tools --------------------------------------------------------------
 # Installs everything pinned in mise/.config/mise/config.toml (Node, codex,

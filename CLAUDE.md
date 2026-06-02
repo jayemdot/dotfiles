@@ -10,7 +10,7 @@ This is a personal dotfiles repository managed with [GNU Stow](https://www.gnu.o
 
 Install all packages from the repo root:
 ```sh
-stow bat git mise ssh tmux vim yazi zsh
+stow bat bin git mise ssh tmux vim yazi zsh
 ```
 
 Install a single package:
@@ -30,6 +30,7 @@ Stow creates symlinks in `$HOME` pointing into this repo. For example, `zsh/.zsh
 | Directory | Target path(s) |
 |-----------|----------------|
 | `bat/` | `~/.config/bat/config` |
+| `bin/` | `~/.local/bin/` (e.g. `iterm-browser`) |
 | `brew/` | `~/.Brewfile` |
 | `git/` | `~/.gitconfig` |
 | `mise/` | `~/.config/mise/config.toml` |
@@ -44,7 +45,7 @@ Stow creates symlinks in `$HOME` pointing into this repo. For example, `zsh/.zsh
 The repo ships two scripts:
 
 - `bootstrap.sh` — runs on a clean macOS. Installs Homebrew + Xcode CLT, installs `gh`, runs `gh auth login` (interactive), clones this private repo, and hands off to `setup.sh`.
-- `setup.sh` — runs from inside an already-cloned repo. Idempotent: `brew bundle`, TPM, `stow bat git mise ssh tmux vim yazi zsh`, then `mise install` (Node + npm globals like `codex` / `gemini-cli` pinned in `mise/.config/mise/config.toml`).
+- `setup.sh` — runs from inside an already-cloned repo. Idempotent: `brew bundle`, TPM, `stow bat bin git mise ssh tmux vim yazi zsh`, then `mise install` (Node + npm globals like `codex` / `gemini-cli` pinned in `mise/.config/mise/config.toml`).
 
 One-shot from a fresh terminal (recommended):
 
@@ -72,7 +73,7 @@ A `post-commit` hook in `.githooks/post-commit` automatically pushes any changes
 - **tmux prefix**: `Ctrl-\` (not the default `Ctrl-b`). Reload config with `prefix + r`.
 - **mise** manages Node.js (and globally-installed npm packages like `codex`, `gemini-cli`) via `mise/.config/mise/config.toml`; `uv` manages Python environments. Stow must run before `mise install` so the config is in place — `setup.sh` handles this ordering.
 - **bat** uses Monokai Extended theme (`bat/.config/bat/config`).
-- **yazi** previews text with a custom `bat.yazi` plugin and Markdown with a custom `mcat.yazi` plugin (routed in `yazi/.config/yazi/yazi.toml`); both need `bat` and `mcat` from Homebrew. `J`/`K` scroll the preview one line at a time.
+- **yazi** previews text with a custom `bat.yazi` plugin and Markdown with a custom `mcat.yazi` plugin (routed in `yazi/.config/yazi/yazi.toml`); both need `bat` and `mcat` from Homebrew. `J`/`K` scroll the preview one line at a time. PDFs preview via poppler (`pdftoppm`); `[preview] max_width/max_height` are bumped so pages fill the pane (run `yazi --clear-cache` after changing). Pressing Enter on a PDF opens it in iTerm2's built-in browser via the `iterm-browser` script (`bin` package) for zoom/page navigation.
 - **vim** uses a custom Emacs-style `C-k` kill-line implementation and the bundled Monokai colorscheme (`vim/.vim/colors/monokai.vim`).
 - **Locale**: `ja_JP.UTF-8` throughout; Japanese input is handled by Google Japanese IME.
 

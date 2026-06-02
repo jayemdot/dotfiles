@@ -1,5 +1,6 @@
 syntax on
 colorscheme monokai
+highlight Normal guibg=NONE ctermbg=NONE
 set encoding=utf-8
 set number
 set expandtab

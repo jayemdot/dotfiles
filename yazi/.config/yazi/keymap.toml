@@ -3,4 +3,6 @@
 prepend_keymap = [
   { on = "J", run = "seek 1",  desc = "Scroll preview down 1 line" },
   { on = "K", run = "seek -1", desc = "Scroll preview up 1 line" },
+  # Toggle the code previewer between bat (file) and delta (git diff).
+  { on = "b", run = "plugin bat", desc = "Toggle git diff in the preview" },
 ]

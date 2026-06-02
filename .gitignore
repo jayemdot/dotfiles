@@ -1,6 +1,8 @@
 .DS_Store
 .netrwhist
 .netrwbook
+*.swp
+*.swo
 
 # yazi plugins installed via `ya pkg` (restored by `ya pkg install` from
 # yazi/.config/yazi/package.toml). Hand-written plugins like bat.yazi /

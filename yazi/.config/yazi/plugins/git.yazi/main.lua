@@ -202,6 +202,25 @@ local function setup(st, opts)
 			return ui.Line { " ", ui.Span(signs[code]):style(styles[code]) }
 		end
 	end, opts.order)
+
+	-- Dim git-ignored files/dirs (VS Code-style) by patching the file name style.
+	-- `Entity:style` is the style applied to the whole name line.
+	if not Entity._git_dimmed then
+		Entity._git_dimmed = true
+		local entity_style = Entity.style
+		function Entity:style()
+			local url = self._file.url
+			local repo = st.dirs[tostring(url.base or url.parent)]
+			if repo then
+				local code = repo == CODES.excluded and CODES.ignored
+					or st.repos[repo][tostring(url):sub(#repo + 2)] or CODES.clean
+				if code == CODES.ignored then
+					return entity_style(self):patch(styles[CODES.ignored])
+				end
+			end
+			return entity_style(self)
+		end
+	end
 end
 
 ---@type UnstableFetcher

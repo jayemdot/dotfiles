@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Available space on the macOS boot volume's APFS container — matches Finder's
+# "Available" / `diskutil info /` Container Free Space. Used in the tmux status
+# bar. -H reports SI units (GB, like Finder), not GiB.
+df -H / | awk 'NR==2 { print $4 }'

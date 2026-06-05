@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Keep only the newest N tmux-resurrect save files, deleting older ones. Meant to
+# run from resurrect's @resurrect-hook-post-save-all (after each auto-save).
+#
+# Safety: bail out unless the newest save looks COMPLETE — it must be non-empty
+# and contain both a `pane` record and the trailing `state` record that
+# resurrect writes last. So a failed/partial save never deletes older good
+# backups; pruning only happens once a healthy save exists.
+#
+# DRY_RUN=1 prints what would be deleted without removing anything.
+
+keep="${TMUX_RESURRECT_KEEP:-10}"
+dir="${XDG_DATA_HOME:-$HOME/.local/share}/tmux/resurrect"
+[ -d "$dir" ] || exit 0
+
+newest=$(ls -1t "$dir"/tmux_resurrect_*.txt 2>/dev/null | head -1)
+[ -n "$newest" ] && [ -s "$newest" ] || exit 0
+grep -q $'^pane\t' "$newest" && grep -q $'^state\t' "$newest" || exit 0
+
+ls -1t "$dir"/tmux_resurrect_*.txt | tail -n +"$((keep + 1))" | while IFS= read -r f; do
+	if [ -n "${DRY_RUN:-}" ]; then
+		echo "would remove: $f"
+	else
+		rm -f "$f"
+	fi
+done

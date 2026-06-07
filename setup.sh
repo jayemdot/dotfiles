@@ -46,6 +46,15 @@ else
   log "ya (yazi) not found — skipping yazi plugin install"
 fi
 
+# --- uv default Python -------------------------------------------------------
+# Make uv's standalone Python the default `python`/`python3` (in ~/.local/bin,
+# which precedes Homebrew on PATH). Python is managed by uv, not mise; the
+# Homebrew pythons remain only as deps of other formulae.
+if command -v uv &>/dev/null; then
+  log "Setting uv's Python 3.14 as the default interpreter"
+  uv python install 3.14 --default --preview-features python-install-default
+fi
+
 log "Setup complete."
 cat <<'EOF'
 

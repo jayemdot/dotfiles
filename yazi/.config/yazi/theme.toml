@@ -9,7 +9,9 @@
 #   s:orange     #FD9720   s:purple    #AE81FF
 
 [manager]
-cwd = { fg = "#66D9EF", bold = true }
+# Path in blue + branch (init.lua) in yellow, matching the zsh prompt / Claude
+# Code statusline (%F{blue} path, %F{yellow} branch).
+cwd = { fg = "blue", bold = true }
 
 hovered         = { fg = "#211F1C", bg = "#A6E22D", bold = true }
 preview_hovered = { underline = true }

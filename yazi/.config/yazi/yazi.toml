@@ -17,9 +17,9 @@ image_quality = 90
 
 [plugin]
 prepend_previewers = [
-  # Render Markdown with mcat; everything else text/* falls through to bat.
-  { url = "*.md",       run = "mcat" },
-  { url = "*.markdown", run = "mcat" },
+  # Render Markdown with glow; everything else text/* falls through to bat.
+  { url = "*.md",       run = "glow" },
+  { url = "*.markdown", run = "glow" },
   { mime = "text/*",    run = "bat"  },
 ]
 

@@ -58,7 +58,8 @@ alias brcl='brew cleanup --prune=all'
 alias brewdump='brew bundle dump --global --force --describe --no-vscode --no-npm'
 alias o='open .'
 alias here='pwd | pbcopy'
-alias tmuxsource='tmux source ~/.tmux.conf 2>&1'
+alias tmuxsource='tmux source ~/.tmux.conf 2>&1'  
+alias lg='lazygit'
 
 # prompt setting
 PROMPT=' %B%F{blue}%~%f%b%F{yellow}${vcs_info_msg_0_}%f'$'\n''%B%(?,%F{green},%F{red})%(!,#,>)%f%b '

@@ -1,4 +1,4 @@
-tap "kegworks-app/kegworks"
+tap "sikarugir-app/sikarugir", "https://github.com/Sikarugir-App/homebrew-sikarugir.git", trusted: true
 # Clone of cat(1) with syntax highlighting and Git integration
 brew "bat"
 # Statistics utility to count lines of code
@@ -13,8 +13,6 @@ brew "curl"
 brew "deno"
 # Simple, fast and user-friendly alternative to find
 brew "fd"
-# Play, record, convert, and stream select audio and video codecs
-brew "ffmpeg", link: false
 # Play, record, convert, and stream many audio and video codecs
 brew "ffmpeg-full", link: true
 # Command-line fuzzy finder written in Go
@@ -25,20 +23,20 @@ brew "gh"
 brew "git"
 # Syntax-highlighting pager for git and diff output
 brew "git-delta"
+# Render markdown on the CLI
+brew "glow"
 # Improved top (interactive process viewer)
 brew "htop"
 # Tools and libraries to manipulate images in select formats
-brew "imagemagick", link: false
+brew "imagemagick"
 # Tools and libraries to manipulate images in many formats
-brew "imagemagick-full", link: true
+brew "imagemagick-full"
 # Lightweight and flexible command-line JSON processor
 brew "jq"
 # Simple terminal UI for git commands
 brew "lazygit"
 # Mac App Store command-line interface
 brew "mas"
-# Terminal image, video, directory, and Markdown viewer
-brew "mcat"
 # Polyglot runtime manager (asdf rust clone)
 brew "mise"
 # Optimized BLAS library
@@ -107,9 +105,13 @@ cask "claude"
 cask "deepl"
 # App to build and share containerised applications and microservices
 cask "docker-desktop"
+# Collaborative team software
+cask "figma"
 cask "font-hackgen-nerd"
 cask "font-ricty-diminished"
 cask "font-symbols-only-nerd-font"
+# Free and open-source image editor
+cask "gimp"
 # Desktop client for GitHub repositories
 cask "github"
 # Web browser
@@ -134,6 +136,8 @@ cask "microsoft-excel"
 cask "microsoft-powerpoint"
 # Word processor
 cask "microsoft-word"
+# Open-source music notation software
+cask "musescore"
 # AI-powered translator
 cask "nani"
 # Knowledge base that works on top of a local folder of plain text Markdown files

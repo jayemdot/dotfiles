@@ -39,6 +39,10 @@ brew "lazygit"
 brew "mas"
 # Polyglot runtime manager (asdf rust clone)
 brew "mise"
+# Ambitious Vim-fork focused on extensibility and agility
+brew "neovim"
+# Create, run, and share large language models (LLMs)
+brew "ollama"
 # Optimized BLAS library
 brew "openblas"
 # Development kit for the Java programming language

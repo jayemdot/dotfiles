@@ -10,7 +10,7 @@ This is a personal dotfiles repository managed with [GNU Stow](https://www.gnu.o
 
 Install all packages from the repo root:
 ```sh
-stow bat bin git mise ssh tmux vim yazi zsh
+stow bat bin git mise nvim ssh tmux vim yazi zsh
 ```
 
 Install a single package:
@@ -34,6 +34,7 @@ Stow creates symlinks in `$HOME` pointing into this repo. For example, `zsh/.zsh
 | `brew/` | `~/.Brewfile` |
 | `git/` | `~/.gitconfig` |
 | `mise/` | `~/.config/mise/config.toml` |
+| `nvim/` | `~/.config/nvim/` |
 | `ssh/` | `~/.ssh/config` |
 | `tmux/` | `~/.tmux.conf` |
 | `vim/` | `~/.vimrc`, `~/.vim/` |
@@ -45,7 +46,7 @@ Stow creates symlinks in `$HOME` pointing into this repo. For example, `zsh/.zsh
 The repo ships two scripts:
 
 - `bootstrap.sh` — runs on a clean macOS. Installs Homebrew + Xcode CLT, installs `gh`, runs `gh auth login` (interactive), clones this private repo, and hands off to `setup.sh`.
-- `setup.sh` — runs from inside an already-cloned repo. Idempotent: `brew bundle`, TPM, `stow bat bin git mise ssh tmux vim yazi zsh`, then `mise install` (Node + npm globals like `codex` / `gemini-cli` pinned in `mise/.config/mise/config.toml`).
+- `setup.sh` — runs from inside an already-cloned repo. Idempotent: `brew bundle`, TPM, `stow bat bin git mise nvim ssh tmux vim yazi zsh`, then `mise install` (Node + npm globals like `codex` / `gemini-cli` pinned in `mise/.config/mise/config.toml`).
 
 One-shot from a fresh terminal (recommended):
 
@@ -75,7 +76,8 @@ A `post-commit` hook in `.githooks/post-commit` automatically pushes any changes
 - **Python is owned entirely by `uv`**, not mise — interpreters (`uv python install`), per-project venvs/deps (`uv init` / `uv add` / `uv run`, with `pyproject.toml` + `uv.lock`), and global CLI tools (`uv tool install` / `uvx`, e.g. jupyterlab). The default `python` / `python3` on PATH is uv's standalone build (`uv python install 3.14 --default`, landing in `~/.local/bin` which precedes Homebrew), so ad-hoc `python3` and tooling use uv — not the Homebrew pythons (kept only as deps of yt-dlp / python-tk@3.11). Don't `pip install` globally; use `uv tool` / `uv add` / `uv pip`.
 - **bat** uses the Monokai Extended Origin theme (`bat/.config/bat/config`). yazi's bat previewer (`yazi/.config/yazi/plugins/bat.yazi`) shows git change markers, tints the background of changed lines, and toggles (`b`) between the file view and a `delta` git-diff view (green add / red delete, deleted lines shown); the diff view needs `git-delta` from Homebrew.
 - **yazi** previews text with a custom `bat.yazi` plugin and Markdown with a custom `glow.yazi` plugin (routed in `yazi/.config/yazi/yazi.toml`); both need `bat` and `glow` from Homebrew. `J`/`K` scroll the preview one line at a time. PDFs preview via poppler (`pdftoppm`); `[preview] max_width/max_height` are bumped so pages fill the pane (run `yazi --clear-cache` after changing). Pressing Enter on a PDF opens it in iTerm2's built-in browser via the `iterm-browser` script (`bin` package) for zoom/page navigation. Git status is shown in the file list (VSCode-style `U`/`M`/`A`/`D` signs, configured in `theme.toml` `[git]`, set up in `init.lua`) by `plugins/git.yazi`. This started as the `yazi-rs/plugins:git` plugin but is **vendored** (tracked, not `ya pkg`-managed) because it carries a local patch: the status sign keeps its color on the hovered/selected row. The `ya pkg` scaffolding (`package.toml`, `ya pkg install` in `setup.sh`) remains for any future plugins.
-- **vim** uses a custom Emacs-style `C-k` kill-line implementation and the bundled Monokai colorscheme (`vim/.vim/colors/monokai.vim`).
+- **vim** uses a custom Emacs-style `C-k` kill-line implementation and the bundled Monokai colorscheme (`vim/.vim/colors/monokai.vim`). Being migrated to **nvim** (see below); `vim/` and `~/.vimrc` are kept in place until the nvim config reaches parity.
+- **nvim** is the in-progress replacement for vim, configured in Lua under `nvim/.config/nvim/`. Structure follows the [lazy.nvim](https://github.com/folke/lazy.nvim) recommended layout: `init.lua` → `lua/config/lazy.lua` (bootstraps lazy.nvim into `~/.local/share/nvim/lazy/`, sets `<Space>` leader) → `lua/config/options.lua` (ported `.vimrc` basics: `number`, 2-space soft tabs, Japanese `fileencodings`); plugin specs live one-per-file in `lua/plugins/` and are auto-imported. `lazy-lock.json` (plugin version pins) is committed via the stow symlink; the plugins themselves are cloned outside the repo and are not tracked. `neovim` is a Homebrew formula (in `~/.Brewfile`). Still TODO before flipping `EDITOR`/aliases to nvim: Emacs insert/cmdline keybindings, the `C-k` kill-line, and a Monokai colorscheme plugin.
 - **Locale**: `ja_JP.UTF-8` throughout; Japanese input is handled by Google Japanese IME.
 
 ## .gitignore

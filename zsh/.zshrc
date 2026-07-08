@@ -104,8 +104,13 @@ claude() {
   command claude "$@"
 }
 
-# tmux auto-start
-if [[ $- == *i* ]] && [[ -z "$TMUX" ]] && command -v tmux &>/dev/null; then
+# tmux auto-start.
+# Skip while Claude Desktop is resolving the shell environment: it launches an
+# interactive login shell to capture env vars, and without this guard that shell
+# auto-attaches tmux, leaking CLAUDE_DESKTOP_RESOLVING_ENVIRONMENT into the tmux
+# server's global env. That then propagates to every pane and makes the claude
+# CLI treat itself as embedded and refuse fullscreen (/tui) rendering.
+if [[ $- == *i* ]] && [[ -z "$TMUX" ]] && [[ -z "$CLAUDE_DESKTOP_RESOLVING_ENVIRONMENT" ]] && command -v tmux &>/dev/null; then
   tmux attach || tmux new
 fi
 

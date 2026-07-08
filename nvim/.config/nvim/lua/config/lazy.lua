@@ -31,8 +31,9 @@ require("lazy").setup({
   spec = {
     { import = "plugins" },
   },
-  -- Built-in colorscheme used only while plugins install on the first run.
-  install = { colorscheme = { "habamax" } },
+  -- Colorscheme used on the install screen (falls back to habamax if monokai
+  -- isn't cloned yet on the very first run).
+  install = { colorscheme = { "monokai", "habamax" } },
   -- Check for plugin updates in the background; don't nag on startup.
   checker = { enabled = true, notify = false },
 })

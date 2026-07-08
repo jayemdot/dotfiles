@@ -2,6 +2,7 @@
 local opt = vim.opt
 
 opt.number = true -- show line numbers
+opt.termguicolors = true -- 24-bit truecolor, required by the Lua monokai colorscheme
 
 -- Indentation: 2-space soft tabs (was `set expandtab` + `retab 2`).
 opt.expandtab = true

@@ -100,7 +100,16 @@ eval "$(uv generate-shell-completion zsh)"
 # Refresh VS Code env vars from tmux so Claude Code's IDE integration
 # tracks the current VS Code window's SSE port across reattaches.
 claude() {
-  [[ -n "$TMUX" ]] && eval "$(tmux show-environment -s 2>/dev/null)"
+  if [[ -n "$TMUX" ]]; then
+    eval "$(tmux show-environment -s 2>/dev/null)"
+    # Force the real in-tmux TERM. Panes/sessions created before the
+    # update-environment fix (and reattaches on a long-lived server, since the
+    # `-a` appended TERM lingers) carry the client's xterm-256color. With
+    # TERM=xterm-* under tmux, `claude` sees an inconsistent setup and refuses
+    # fullscreen (/tui) rendering. default-terminal is tmux-256color.
+    local _dt="$(tmux show-options -gv default-terminal 2>/dev/null)"
+    export TERM="${_dt:-tmux-256color}"
+  fi
   command claude "$@"
 }
 

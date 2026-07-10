@@ -23,8 +23,8 @@ zstyle ':vcs_info:*' enable git
 zstyle ':vcs_info:git:*' formats ' (%b)'
 setopt prompt_subst
 
-# set vim for the editor
-export EDITOR="vim"
+# set nvim as the default editor (vim kept as a fallback)
+export EDITOR="nvim"
 
 # disable flow control
 setopt no_flow_control
@@ -45,7 +45,7 @@ zstyle ':completion::complete:*' use-cache true
 zstyle ':completion:*' list-colors "${LS_COLORS}"
 
 # alias
-alias vz='vim ~/.zshrc'
+alias vz='nvim ~/.zshrc'
 alias sz='source ~/.zshrc'
 alias ls='ls -G'
 alias nq='networkQuality'

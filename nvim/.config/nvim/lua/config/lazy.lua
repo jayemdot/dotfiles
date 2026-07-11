@@ -6,6 +6,7 @@ vim.g.maplocalleader = "\\"
 -- Editor options and keymaps (ported from the old .vimrc). Loaded before plugins.
 require("config.options")
 require("config.keymaps")
+require("config.autocmds")
 
 -- Bootstrap lazy.nvim: on first launch, clone the stable branch into the data
 -- dir (~/.local/share/nvim/lazy/lazy.nvim). This lives outside the dotfiles

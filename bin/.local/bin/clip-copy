@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# Portable clipboard sink — pipe text in and it lands on the "right" clipboard.
+#   pwd | clip-copy
+# Used by tmux copy-mode (MouseDragEnd1Pane) and the `here` zsh alias, so the
+# same dotfiles work on macOS, Ubuntu over SSH, and WSL.
+#
+# Resolution order:
+#   1. pbcopy                      — macOS
+#   2. tmux load-buffer -w         — inside tmux on Linux: tmux buffer + the
+#      outer terminal's clipboard via OSC 52 (iTerm2 / Windows Terminal both
+#      accept it; tmux's set-clipboard defaults to `external`)
+#   3. OSC 52 straight to the tty  — bare SSH session: copies to the terminal
+#      you are physically looking at (e.g. iTerm2 on the Mac)
+#   4. clip.exe                    — WSL local session: Windows clipboard
+#   5. wl-copy / xclip / xsel      — Linux desktop (Wayland / X11)
+#   6. OSC 52                      — last resort
+set -euo pipefail
+
+osc52() {
+  local b64
+  b64=$(base64 | tr -d '\n')
+  if (: >/dev/tty) 2>/dev/null; then
+    printf '\033]52;c;%s\a' "$b64" > /dev/tty
+  else
+    printf '\033]52;c;%s\a' "$b64" # no tty (rare): emit to stdout
+  fi
+}
+
+command -v pbcopy >/dev/null 2>&1 && exec pbcopy
+
+# TMUX_PANE covers copy-pipe / run-shell contexts where TMUX itself may be unset.
+if [ -n "${TMUX:-}${TMUX_PANE:-}" ] && command -v tmux >/dev/null 2>&1; then
+  exec tmux load-buffer -w -
+fi
+
+# SSH first: even on WSL, when you're SSHed in you want the clipboard of the
+# machine you're sitting at (OSC 52 rides the tty back), not Windows'.
+if [ -n "${SSH_TTY:-}${SSH_CONNECTION:-}" ]; then
+  osc52
+  exit 0
+fi
+
+if command -v clip.exe >/dev/null 2>&1 && grep -qi microsoft /proc/version 2>/dev/null; then
+  exec clip.exe
+fi
+
+[ -n "${WAYLAND_DISPLAY:-}" ] && command -v wl-copy >/dev/null 2>&1 && exec wl-copy
+[ -n "${DISPLAY:-}" ] && command -v xclip >/dev/null 2>&1 && exec xclip -selection clipboard -in
+[ -n "${DISPLAY:-}" ] && command -v xsel >/dev/null 2>&1 && exec xsel --clipboard --input
+
+osc52

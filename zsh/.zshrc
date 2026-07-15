@@ -3,6 +3,9 @@ export LANG=ja_JP.UTF-8
 export LESSCHARSET=utf-8
 export LC_ALL=ja_JP.UTF-8
 
+# OS detection — this file is shared between macOS and Ubuntu (incl. WSL)
+[[ "$OSTYPE" == darwin* ]] && IS_MAC=1 || IS_MAC=
+
 # emacs keybind
 bindkey -e
 
@@ -34,10 +37,16 @@ setopt extended_glob
 
 # auto complete
 setopt auto_param_keys
-[ -f /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ] && \
-  source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-[ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && \
-  source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# zsh plugins — Homebrew (macOS) or apt (Ubuntu) install locations
+for _p in /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh \
+          /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh; do
+  [ -f "$_p" ] && source "$_p" && break
+done
+for _p in /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
+          /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh; do
+  [ -f "$_p" ] && source "$_p" && break
+done
+unset _p
 setopt mark_dirs
 export LSCOLORS=Exfxcxdxbxegedabagacad
 export LS_COLORS='di=01;34:ln=01;35:so=01;32:ex=01;31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
@@ -47,17 +56,25 @@ zstyle ':completion:*' list-colors "${LS_COLORS}"
 # alias
 alias vz='nvim ~/.zshrc'
 alias sz='source ~/.zshrc'
-alias ls='ls -G'
-alias nq='networkQuality'
 alias ll='ls -al'
-alias bs='brew search'
-alias bi='brew info'
 alias bcat='bat'
-alias brltst='brew update && brew upgrade && brew cleanup && brew doctor && mas update'
-alias brcl='brew cleanup --prune=all'
-alias brewdump='brew bundle dump --global --force --no-vscode --no-npm'
-alias o='open .'
-alias here='pwd | pbcopy'
+alias here='pwd | clip-copy' # clip-copy: bin パッケージの可搬クリップボード
+if [[ -n $IS_MAC ]]; then
+  alias ls='ls -G'
+  alias o='open .'
+  alias nq='networkQuality'
+  alias bs='brew search'
+  alias bi='brew info'
+  alias brltst='brew update && brew upgrade && brew cleanup && brew doctor && mas update'
+  alias brcl='brew cleanup --prune=all'
+  alias brewdump='brew bundle dump --global --force --no-vscode --no-npm'
+elif grep -qi microsoft /proc/version 2>/dev/null; then
+  alias ls='ls --color=auto'
+  alias o='explorer.exe .' # WSL: カレントを Windows エクスプローラで開く
+else
+  alias ls='ls --color=auto'
+  alias o='xdg-open .'
+fi
 alias tmuxsource='tmux source ~/.tmux.conf 2>&1'  
 alias lg='lazygit'
 
@@ -66,19 +83,21 @@ PROMPT=' %B%F{blue}%~%f%b%F{yellow}${vcs_info_msg_0_}%f'$'\n''%B%(?,%F{green},%F
 
 # PATH setting
 typeset -U path PATH
-export PATH="/opt/homebrew/opt/git:$PATH"
-export PATH="/opt/homebrew/opt/php:$PATH"
-export PATH="/opt/homebrew/opt/curl/bin:$PATH"
-export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
-export PATH="/Library/TeX/texbin:$PATH"
+if [[ -n $IS_MAC ]]; then
+  export PATH="/opt/homebrew/opt/git:$PATH"
+  export PATH="/opt/homebrew/opt/php:$PATH"
+  export PATH="/opt/homebrew/opt/curl/bin:$PATH"
+  export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
+  export PATH="/Library/TeX/texbin:$PATH"
+
+  # for compilers to find curl
+  export LDFLAGS="-L/opt/homebrew/opt/curl/lib"
+  export CPPFLAGS="-I/opt/homebrew/opt/curl/include"
+
+  # forpkgconf to find curl
+  export PKG_CONFIG_PATH="/opt/homebrew/opt/curl/lib/pkgconfig"
+fi
 export PATH="$HOME/.local/bin:$PATH"
-
-# for compilers to find curl
-export LDFLAGS="-L/opt/homebrew/opt/curl/lib"
-export CPPFLAGS="-I/opt/homebrew/opt/curl/include"
-
-# forpkgconf to find curl
-export PKG_CONFIG_PATH="/opt/homebrew/opt/curl/lib/pkgconfig"
 
 
 # Pandoc
@@ -88,14 +107,24 @@ md2pdf() { pandoc "$1" -o "${1%.md}.pdf" --pdf-engine=lualatex -V documentclass=
 docx2md() { pandoc -s "$1" --wrap=none --extract-media=media -t gfm -o "${1%.docx}.md"; }
 
 # fzf (Ctrl-R: 履歴検索, Ctrl-T: ファイル検索, Alt-C: ディレクトリ移動)
-command -v fzf &>/dev/null && eval "$(fzf --zsh)"
+if command -v fzf &>/dev/null; then
+  _fzf_init="$(fzf --zsh 2>/dev/null)"
+  if [ -n "$_fzf_init" ]; then
+    eval "$_fzf_init"
+  else
+    # fzf < 0.48 (Ubuntu apt 版) には --zsh が無いので同梱スクリプトを読む
+    [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ] && source /usr/share/doc/fzf/examples/key-bindings.zsh
+    [ -f /usr/share/doc/fzf/examples/completion.zsh ] && source /usr/share/doc/fzf/examples/completion.zsh
+  fi
+  unset _fzf_init
+fi
 export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
 
 # mise (Node/Python/etc version manager)
 command -v mise &>/dev/null && eval "$(mise activate zsh)"
 
 # uv auto complete
-eval "$(uv generate-shell-completion zsh)"
+command -v uv &>/dev/null && eval "$(uv generate-shell-completion zsh)"
 
 # Refresh VS Code env vars from tmux so Claude Code's IDE integration
 # tracks the current VS Code window's SSE port across reattaches.

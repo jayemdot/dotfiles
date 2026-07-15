@@ -1,6 +1,6 @@
 # dotfiles
 
-[GNU Stow](https://www.gnu.org/software/stow/) で管理する macOS 用 dotfiles。
+[GNU Stow](https://www.gnu.org/software/stow/) で管理する dotfiles。macOS がメインだが、Ubuntu (WSL 含む) でも同じ設定が使える (設定ファイルは OS 判定で分岐済み)。
 
 ## クリーン macOS でのセットアップ
 
@@ -31,7 +31,8 @@ tmux                     # tmux を起動
 | パス | 役割 |
 |------|------|
 | `bootstrap.sh` | クリーン macOS 用ブートストラップ。Gist にもミラーされる |
-| `setup.sh` | clone 済み repo から実行する冪等なセットアップ |
+| `setup.sh` | clone 済み repo から実行する冪等なセットアップ (macOS) |
+| `setup-ubuntu.sh` | Ubuntu (WSL 含む) 用の冪等なセットアップ。apt + GitHub releases |
 | `.githooks/post-commit` | `bootstrap.sh` の変更を Gist に自動同期 |
 | `brew/.Brewfile` | Homebrew パッケージ・cask・Mac App Store アプリ |
 | `bat/`, `bin/`, `git/`, `mise/`, `nvim/`, `ssh/`, `tmux/`, `vim/`, `yazi/`, `zsh/` | Stow パッケージ。各ディレクトリが `$HOME` 配下のパスを反映 |
@@ -73,6 +74,22 @@ clone 済みの repo から実行する。冪等なので何度走らせても�
 6. `ya pkg install` で `yazi/.config/yazi/package.toml` にピン留めされた yazi プラグインをインストール（git ステータス表示プラグインは vendoring 済みのため対象外）
 
 stow は `mise install` より先に走ります。これは mise が `~/.config/mise/config.toml` を読むタイミングで stow 経由の symlink が存在している必要があるためです。
+
+### `setup-ubuntu.sh`
+
+Ubuntu (WSL 含む) 用。clone 済みの repo から実行する。冪等。
+
+```sh
+cd ~/dotfiles && ./setup-ubuntu.sh
+```
+
+1. apt パッケージ (zsh, tmux, stow, bat, fzf, ripgrep, zsh プラグイン, 日本語ロケール等)
+2. Ubuntu 固有の名前ずれを shim (`batcat`→`bat`, `fdfind`→`fd` を `~/.local/bin` に symlink)
+3. apt に無い/古いツール (neovim, yazi, glow) を公式 GitHub releases から `~/.local/opt` へ
+4. TPM / git hooks / stow / mise / uv は macOS 版と同じ流れ (`brew` パッケージのみ macOS 専用で除外)
+5. ログインシェルを zsh に変更
+
+クリップボードは `bin/clip-copy` が環境を自動判別する (macOS: `pbcopy` / tmux 内: OSC 52 / WSL: `clip.exe` / X11: `xclip`)。SSH 先の tmux でコピーした内容は、手元で見ている端末 (iTerm2 / Windows Terminal) のクリップボードに入る。
 
 ## GitHub Gist について
 

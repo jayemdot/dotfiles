@@ -43,10 +43,11 @@ Stow creates symlinks in `$HOME` pointing into this repo. For example, `zsh/.zsh
 
 ## Restoring a new machine
 
-The repo ships two scripts:
+The repo ships three scripts:
 
 - `bootstrap.sh` — runs on a clean macOS. Installs Homebrew + Xcode CLT, installs `gh`, runs `gh auth login` (interactive), clones this private repo, and hands off to `setup.sh`.
-- `setup.sh` — runs from inside an already-cloned repo. Idempotent: `brew bundle`, TPM, `stow bat bin git mise nvim ssh tmux vim yazi zsh`, then `mise install` (Node + npm globals like `codex` / `gemini-cli` pinned in `mise/.config/mise/config.toml`).
+- `setup.sh` — runs from inside an already-cloned repo (macOS). Idempotent: `brew bundle`, TPM, `stow bat bin git mise nvim ssh tmux vim yazi zsh`, then `mise install` (Node + npm globals like `codex` / `gemini-cli` pinned in `mise/.config/mise/config.toml`).
+- `setup-ubuntu.sh` — the apt counterpart for Ubuntu (incl. WSL). Idempotent: apt packages (with `batcat`→`bat` / `fdfind`→`fd` shims in `~/.local/bin`), GitHub-release installs of neovim/yazi/glow into `~/.local/opt`, then the same TPM/hooks/stow/mise/uv flow. The `brew` stow package and `bootstrap.sh` are macOS-only.
 
 One-shot from a fresh terminal (recommended):
 
@@ -78,6 +79,7 @@ A `post-commit` hook in `.githooks/post-commit` automatically pushes any changes
 - **yazi** previews text with a custom `bat.yazi` plugin and Markdown with a custom `glow.yazi` plugin (routed in `yazi/.config/yazi/yazi.toml`); both need `bat` and `glow` from Homebrew. `J`/`K` scroll the preview one line at a time. PDFs preview via poppler (`pdftoppm`); `[preview] max_width/max_height` are bumped so pages fill the pane (run `yazi --clear-cache` after changing). Pressing Enter on a PDF opens it in iTerm2's built-in browser via the `iterm-browser` script (`bin` package) for zoom/page navigation. Git status is shown in the file list (VSCode-style `U`/`M`/`A`/`D` signs, configured in `theme.toml` `[git]`, set up in `init.lua`) by `plugins/git.yazi`. This started as the `yazi-rs/plugins:git` plugin but is **vendored** (tracked, not `ya pkg`-managed) because it carries a local patch: the status sign keeps its color on the hovered/selected row. The `ya pkg` scaffolding (`package.toml`, `ya pkg install` in `setup.sh`) remains for any future plugins.
 - **nvim** is the default editor (`EDITOR=nvim`, `vz` alias), configured in Lua under `nvim/.config/nvim/`. Structure follows the [lazy.nvim](https://github.com/folke/lazy.nvim) recommended layout: `init.lua` → `lua/config/lazy.lua` (bootstraps lazy.nvim into `~/.local/share/nvim/lazy/`, sets `<Space>` leader) → `lua/config/options.lua` (ported `.vimrc` basics: `number`, 2-space soft tabs, `termguicolors`, Japanese `fileencodings`) → `lua/config/keymaps.lua` (Emacs insert/cmdline motion + a `C-k` kill-line reimplemented on the Neovim API, byte-safe for multibyte). Plugin specs live one-per-file in `lua/plugins/` and are auto-imported; `lua/plugins/colorscheme.lua` uses `tanvirtin/monokai.nvim` (classic palette) and clears the background on gutter groups to reproduce the old transparent look. `lazy-lock.json` (plugin version pins) is committed via the stow symlink; the plugins themselves are cloned outside the repo and are not tracked. `neovim` is a Homebrew formula (in `~/.Brewfile`).
 - **vim** is retained as a fallback (`vim/` package, `~/.vimrc`, bundled Monokai colorscheme, Vimscript `C-k` kill-line). nvim (above) has superseded it as the default; vim is no longer wired to `EDITOR`.
+- **Cross-platform (macOS / Ubuntu / WSL)**: configs are OS-guarded rather than forked. `.zshrc` branches on `$OSTYPE` (`IS_MAC`): Homebrew paths/aliases are macOS-only; zsh plugins and fzf keybindings fall back to apt locations; `o` maps to `open` / `explorer.exe` / `xdg-open`. The clipboard is unified behind `bin/clip-copy` (pbcopy → tmux `load-buffer -w` (OSC 52) → SSH OSC 52 → clip.exe → wl-copy/xclip), used by tmux copy-mode and the `here` alias — copying inside a remote tmux lands on the clipboard of the terminal you're looking at. `ssh/config` guards the Apple-only `UseKeychain` with `IgnoreUnknown`; `iterm-browser` falls back to `wslview`/`xdg-open` outside iTerm2.
 - **Locale**: `ja_JP.UTF-8` throughout; Japanese input is handled by Google Japanese IME.
 
 ## .gitignore

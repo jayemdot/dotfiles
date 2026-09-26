@@ -7,26 +7,26 @@
 #   s:pink       #F92772   s:green     #A6E22D
 #   s:aqua       #66D9EF   s:yellow    #E6DB74
 #   s:orange     #FD9720   s:purple    #AE81FF
+#
+# Section/key names follow yazi 26.9 (yazi-config/src/theme/theme.rs). Unknown
+# sections are NOT an error — yazi silently swallows them as "custom" sections
+# (that's how plugin sections like [git] work) — so a stale name like the old
+# [manager] fails silently. Check theme.rs after major yazi upgrades.
 
-[manager]
+[mgr]
 # Path in blue + branch (init.lua) in yellow, matching the zsh prompt / Claude
 # Code statusline (%F{blue} path, %F{yellow} branch).
 cwd = { fg = "blue", bold = true }
 
-hovered         = { fg = "#211F1C", bg = "#A6E22D", bold = true }
-preview_hovered = { underline = true }
-
 find_keyword  = { fg = "#E6DB74", bold = true, italic = true }
 find_position = { fg = "#F92772", bold = true }
+
+symlink_target = { fg = "#66D9EF", italic = true }
 
 marker_copied   = { fg = "#A6E22D", bg = "#A6E22D" }
 marker_cut      = { fg = "#F92772", bg = "#F92772" }
 marker_marked   = { fg = "#66D9EF", bg = "#66D9EF" }
 marker_selected = { fg = "#E6DB74", bg = "#E6DB74" }
-
-# TabLineSel: fg=darkblack bg=warmgrey bold / TabLine: fg=lightgrey
-tab_active   = { fg = "#211F1C", bg = "#75715E", bold = true }
-tab_inactive = { fg = "#575b61" }
 
 count_copied   = { fg = "#211F1C", bg = "#A6E22D", bold = true }
 count_cut      = { fg = "#211F1C", bg = "#F92772", bold = true }
@@ -35,19 +35,34 @@ count_selected = { fg = "#211F1C", bg = "#E6DB74", bold = true }
 border_symbol = "│"
 border_style  = { fg = "#575b61" }
 
+# TabLineSel: fg=darkblack bg=warmgrey bold / TabLine: fg=lightgrey
+[tabs]
+active    = { fg = "#211F1C", bg = "#75715E", bold = true }
+inactive  = { fg = "#575b61" }
+# Flat tabs — no powerline glyphs (upstream default uses them).
+sep_inner = { open = "", close = "" }
+sep_outer = { open = "", close = "" }
+
+# Status-bar mode block: *_main = mode label, *_alt = the segment beside it.
+[mode]
+normal_main = { fg = "#211F1C", bg = "#A6E22D", bold = true }
+normal_alt  = { fg = "#A6E22D", bg = "#2D2E27" }
+select_main = { fg = "#211F1C", bg = "#66D9EF", bold = true }
+select_alt  = { fg = "#66D9EF", bg = "#2D2E27" }
+unset_main  = { fg = "#211F1C", bg = "#FD9720", bold = true }
+unset_alt   = { fg = "#FD9720", bg = "#2D2E27" }
+
+# Hovered row in each pane (was [manager] hovered / preview_hovered).
+[indicator]
+parent  = { fg = "#E8E8E3", bg = "#2D2E27" }
+current = { fg = "#211F1C", bg = "#A6E22D", bold = true }
+preview = { underline = true }
+padding = { open = "", close = "" }
+
 [status]
-separator_open  = ""
-separator_close = ""
-# StatusLine: fg=black bg=lightgrey
-separator_style = { fg = "#575b61", bg = "#575b61" }
-
-mode_normal = { fg = "#211F1C", bg = "#A6E22D", bold = true }
-mode_select = { fg = "#211F1C", bg = "#66D9EF", bold = true }
-mode_unset  = { fg = "#211F1C", bg = "#FD9720", bold = true }
-
-progress_label  = { fg = "#E8E8E3", bold = true }
-progress_normal = { fg = "#66D9EF", bg = "#272822" }
-progress_error  = { fg = "#F92772", bg = "#272822" }
+# Flat status bar — no powerline glyphs.
+sep_left  = { open = "", close = "" }
+sep_right = { open = "", close = "" }
 
 # perm: type=aqua read=yellow write=pink exec=green sep=warmgrey
 perm_type  = { fg = "#66D9EF" }
@@ -56,35 +71,65 @@ perm_write = { fg = "#F92772" }
 perm_exec  = { fg = "#A6E22D" }
 perm_sep   = { fg = "#75715E" }
 
-[input]
-border   = { fg = "#FD9720" }
-title    = { fg = "#E8E8E3", bold = true }
-value    = { fg = "#E8E8E3" }
-selected = { fg = "#211F1C", bg = "#FD9720" }
-
-[select]
-border   = { fg = "#FD9720" }
-active   = { fg = "#A6E22D", bold = true }
-inactive = { fg = "#75715E" }
-
-[tasks]
-border  = { fg = "#FD9720" }
-title   = { fg = "#E8E8E3", bold = true }
-hovered = { fg = "#66D9EF", underline = true }
+progress_label  = { fg = "#E8E8E3", bold = true }
+progress_normal = { fg = "#66D9EF", bg = "#272822" }
+progress_error  = { fg = "#F92772", bg = "#272822" }
 
 [which]
+border          = { fg = "#FD9720" }
 mask            = { bg = "#272822" }
 cand            = { fg = "#66D9EF" }
 rest            = { fg = "#75715E" }
 desc            = { fg = "#AE81FF" }
 separator_style = { fg = "#2D2E27" }
 
+[confirm]
+border     = { fg = "#FD9720" }
+title      = { fg = "#E8E8E3", bold = true }
+body       = { fg = "#E8E8E3" }
+list       = { fg = "#E6DB74" }
+btn_yes    = { fg = "#211F1C", bg = "#A6E22D", bold = true }
+btn_no     = { fg = "#75715E" }
+
+[spot]
+border   = { fg = "#FD9720" }
+title    = { fg = "#E8E8E3", bold = true }
+tbl_col  = { fg = "#66D9EF" }
+tbl_cell = { fg = "#211F1C", bg = "#E6DB74" }
+
+[notify]
+title_info  = { fg = "#A6E22D" }
+title_warn  = { fg = "#FD9720" }
+title_error = { fg = "#F92772" }
+
+# Was [select] (renamed to [pick]).
+[pick]
+border   = { fg = "#FD9720" }
+active   = { fg = "#A6E22D", bold = true }
+inactive = { fg = "#75715E" }
+
+[input]
+border   = { fg = "#FD9720" }
+title    = { fg = "#E8E8E3", bold = true }
+value    = { fg = "#E8E8E3" }
+selected = { fg = "#211F1C", bg = "#FD9720" }
+
+[cmp]
+border   = { fg = "#FD9720" }
+active   = { fg = "#211F1C", bg = "#66D9EF" }
+inactive = { fg = "#E8E8E3" }
+
+[tasks]
+border  = { fg = "#FD9720" }
+title   = { fg = "#E8E8E3", bold = true }
+hovered = { fg = "#66D9EF", underline = true }
+
+# Was on/exec (renamed to chord/action); desc/footer no longer exist.
 [help]
-on      = { fg = "#AE81FF", bold = true }
-exec    = { fg = "#66D9EF" }
-desc    = { fg = "#75715E" }
+border  = { fg = "#FD9720" }
+chord   = { fg = "#AE81FF", bold = true }
+action  = { fg = "#66D9EF" }
 hovered = { fg = "#E8E8E3", bg = "#2D2E27", bold = true }
-footer  = { fg = "#211F1C", bg = "#75715E" }
 
 # git.yazi status signs, VSCode-style letters + Monokai colors:
 #   U untracked/new (green)   M modified (orange)   A added/staged (green)

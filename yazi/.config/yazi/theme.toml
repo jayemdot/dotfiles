@@ -132,19 +132,21 @@ action  = { fg = "#66D9EF" }
 hovered = { fg = "#E8E8E3", bg = "#2D2E27", bold = true }
 
 # git.yazi status signs, VSCode-style letters + Monokai colors:
-#   U untracked/new (green)   M modified (orange)   A added/staged (green)
+#   U untracked/new (green)   M unstaged (orange) / staged (green)   A added (green)
 #   D deleted (pink)          ! conflict (pink)     ignored hidden
 [git]
 untracked = { fg = "#A6E22D" }
 added     = { fg = "#A6E22D" }
-modified  = { fg = "#FD9720" }
+unstaged  = { fg = "#FD9720" }
+staged    = { fg = "#A6E22D" }
 updated   = { fg = "#F92772", bold = true }
 deleted   = { fg = "#F92772" }
 ignored   = { fg = "#75715E" }
 
 untracked_sign = "U"
 added_sign     = "A"
-modified_sign  = "M"
+unstaged_sign  = "M"
+staged_sign    = "M"
 updated_sign   = "!"
 deleted_sign   = "D"
 ignored_sign   = ""

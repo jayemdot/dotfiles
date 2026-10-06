@@ -84,4 +84,4 @@ A `post-commit` hook in `.githooks/post-commit` automatically pushes any changes
 
 ## .gitignore
 
-Private SSH keys (`id_ed25519`, `id_ed25519.pub`) and `.DS_Store` are excluded. Public keys are intentionally not tracked.
+`~/.ssh` is stow-folded into the repo (`~/.ssh -> dotfiles/ssh/.ssh`), so private keys physically live in `ssh/.ssh/`. The `.gitignore` therefore allowlists that directory: `ssh/.ssh/*` is ignored except `config` — any new key (whatever its name), `known_hosts` and agent sockets stay untracked. Never weaken this to a per-filename list. `.DS_Store`, `.netrwhist` and vim swap files are also ignored. **This repo is public** — never commit secrets, tokens or personal data.

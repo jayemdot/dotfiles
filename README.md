@@ -35,7 +35,7 @@ tmux                     # tmux を起動
 | `setup-ubuntu.sh` | Ubuntu (WSL 含む) 用の冪等なセットアップ。apt + GitHub releases |
 | `.githooks/post-commit` | `bootstrap.sh` の変更を Gist に自動同期 |
 | `brew/.Brewfile` | Homebrew パッケージ・cask・Mac App Store アプリ |
-| `bat/`, `bin/`, `git/`, `mise/`, `nvim/`, `ssh/`, `tmux/`, `vim/`, `yazi/`, `zsh/` | Stow パッケージ。各ディレクトリが `$HOME` 配下のパスを反映 |
+| `bat/`, `bin/`, `git/`, `iterm2/`, `kitty/`, `mise/`, `nvim/`, `ssh/`, `tmux/`, `vim/`, `yazi/`, `zsh/` | Stow パッケージ。各ディレクトリが `$HOME` 配下のパスを反映 |
 
 ### Stow パッケージマップ
 
@@ -45,10 +45,12 @@ tmux                     # tmux を起動
 | `bin/` | `~/.local/bin/`（`iterm-browser` など） |
 | `brew/` | `~/.Brewfile` |
 | `git/` | `~/.gitconfig` |
+| `iterm2/` | `~/Library/Application Support/iTerm2/DynamicProfiles/dotfiles.json`（生成物） |
+| `kitty/` | `~/.config/kitty/`（`kitty.conf` 以外は生成物） |
 | `mise/` | `~/.config/mise/config.toml` |
 | `nvim/` | `~/.config/nvim/` |
 | `ssh/` | `~/.ssh/config` |
-| `tmux/` | `~/.tmux.conf` |
+| `tmux/` | `~/.tmux.conf`, `~/.tmux/theme.conf`（生成物） |
 | `vim/` | `~/.vimrc`, `~/.vim/` |
 | `yazi/` | `~/.config/yazi/` |
 | `zsh/` | `~/.zshrc` |
@@ -69,7 +71,7 @@ clone 済みの repo から実行する。冪等なので何度走らせても�
 1. `brew bundle --file brew/.Brewfile` で全パッケージ入れる (`mise` 本体含む)
 2. TPM (tmux plugin manager) を clone
 3. repo-local git hooks を有効化 (`core.hooksPath = .githooks`)
-4. `stow bat bin git mise nvim ssh tmux vim yazi zsh` でシンボリックリンク作成
+4. `stow bat bin git iterm2 kitty mise nvim ssh tmux vim yazi zsh` でシンボリックリンク作成
 5. `mise install` で `mise/.config/mise/config.toml` にピン留めされたツール (Node、`codex`、`gemini-cli` など) をまとめてインストール
 6. `ya pkg install` で `yazi/.config/yazi/package.toml` にピン留めされた yazi プラグインをインストール（git ステータス表示プラグインは vendoring 済みのため対象外）
 
@@ -99,6 +101,17 @@ cd ~/dotfiles && ./setup-ubuntu.sh
 - **公開コピー**: Gist `a5c4129e41cf20af06b6fbe2866d0248`
 
 両者の同期は `.githooks/post-commit` が自動で行うので、`bootstrap.sh` を編集して `git commit` するだけで Gist 側にも反映されます。手動操作は不要です。
+
+## 端末の見た目（kitty / iTerm2 共通マスタ）
+
+フォント・配色・不透明度・カーソル形状は `terminal/theme.toml` が唯一のマスタ。ここだけを編集して生成する。
+
+```sh
+python3 terminal/generate.py          # 生成物を更新
+python3 terminal/generate.py --check  # 生成物が最新か確認
+```
+
+生成物: `kitty/.config/kitty/{appearance,*-theme.auto}.conf`、`iterm2/.../DynamicProfiles/dotfiles.json`、`tmux/.tmux/theme.conf`。生成物を手で編集したり、生成し忘れたままコミットしようとすると `.githooks/pre-commit` が止める。`theme.toml` に未知のキーや不正な値があれば生成自体がエラーになる。
 
 ## Stow の使い方
 

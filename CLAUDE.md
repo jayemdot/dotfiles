@@ -10,7 +10,7 @@ This is a personal dotfiles repository managed with [GNU Stow](https://www.gnu.o
 
 Install all packages from the repo root:
 ```sh
-stow bat bin git mise nvim ssh tmux vim yazi zsh
+stow bat bin git iterm2 kitty mise nvim ssh tmux vim yazi zsh
 ```
 
 Install a single package:
@@ -33,10 +33,12 @@ Stow creates symlinks in `$HOME` pointing into this repo. For example, `zsh/.zsh
 | `bin/` | `~/.local/bin/` (e.g. `iterm-browser`) |
 | `brew/` | `~/.Brewfile` |
 | `git/` | `~/.gitconfig` |
+| `iterm2/` | `~/Library/Application Support/iTerm2/DynamicProfiles/dotfiles.json` (generated) |
+| `kitty/` | `~/.config/kitty/` (all but `kitty.conf` generated) |
 | `mise/` | `~/.config/mise/config.toml` |
 | `nvim/` | `~/.config/nvim/` |
 | `ssh/` | `~/.ssh/config` |
-| `tmux/` | `~/.tmux.conf` |
+| `tmux/` | `~/.tmux.conf`, `~/.tmux/theme.conf` (generated) |
 | `vim/` | `~/.vimrc`, `~/.vim/` |
 | `yazi/` | `~/.config/yazi/` |
 | `zsh/` | `~/.zshrc` |
@@ -46,7 +48,7 @@ Stow creates symlinks in `$HOME` pointing into this repo. For example, `zsh/.zsh
 The repo ships three scripts:
 
 - `bootstrap.sh` — runs on a clean macOS. Installs Homebrew + Xcode CLT, installs `gh`, runs `gh auth login` (interactive), clones this private repo, and hands off to `setup.sh`.
-- `setup.sh` — runs from inside an already-cloned repo (macOS). Idempotent: `brew bundle`, TPM, `stow bat bin git mise nvim ssh tmux vim yazi zsh`, then `mise install` (Node + npm globals like `codex` / `gemini-cli` pinned in `mise/.config/mise/config.toml`).
+- `setup.sh` — runs from inside an already-cloned repo (macOS). Idempotent: `brew bundle`, TPM, `stow bat bin git iterm2 kitty mise nvim ssh tmux vim yazi zsh`, then `mise install` (Node + npm globals like `codex` / `gemini-cli` pinned in `mise/.config/mise/config.toml`).
 - `setup-ubuntu.sh` — the apt counterpart for Ubuntu (incl. WSL). Idempotent: apt packages (with `batcat`→`bat` / `fdfind`→`fd` shims in `~/.local/bin`), GitHub-release installs of neovim/yazi/glow into `~/.local/opt`, then the same TPM/hooks/stow/mise/uv flow. The `brew` stow package and `bootstrap.sh` are macOS-only.
 
 One-shot from a fresh terminal (recommended):
@@ -71,6 +73,7 @@ A `post-commit` hook in `.githooks/post-commit` automatically pushes any changes
 
 ## Key configuration notes
 
+- **Terminal appearance has one master**: `terminal/theme.toml` (font, cursor, opacity/blur, light+dark colors, tmux active-pane bg). `terminal/generate.py` (stdlib-only, hard-fails on unknown keys/bad values) writes kitty's `appearance.conf` + `{dark,light,no-preference}-theme.auto.conf` (kitty switches with the macOS appearance), the iTerm2 Dynamic Profile `dotfiles.json` (fully explicit — no `Dynamic Profile Parent`, so it never depends on the unmanaged iTerm2 plist; `setup.sh` makes it the default profile), and `tmux/.tmux/theme.conf`. **Never edit generated files or run `kitten themes`** (it would overwrite the symlinked auto.conf files); `.githooks/pre-commit` rejects stale/hand-edited output. kitty is the primary terminal (kitty graphics protocol for images in nvim/yazi through tmux); `kitty.conf` holds only behavior. No background image: it would live outside the repo.
 - **Shell**: zsh with `zsh-autosuggestions` and `zsh-syntax-highlighting` (installed via Homebrew at `/opt/homebrew/share/`).
 - **tmux prefix**: `Ctrl-\` (not the default `Ctrl-b`). Reload config with `prefix + r`.
 - **mise** manages Node.js (and globally-installed npm packages like `codex`, `gemini-cli`), plus pnpm/ruby/etc., via `mise/.config/mise/config.toml`. Stow must run before `mise install` so the config is in place — `setup.sh` handles this ordering. **Python is intentionally not in mise.**

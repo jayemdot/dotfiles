@@ -28,10 +28,12 @@ case "$arg" in
     ;;
 esac
 
-# Outside iTerm2 (Ubuntu desktop, WSL): hand off to the platform opener instead
-# of emitting an escape sequence nothing will handle. Over SSH from iTerm2 the
-# OSC would reach iTerm2, but a remote file:// path wouldn't resolve there anyway.
+# Outside iTerm2 (kitty, Ubuntu desktop, WSL): hand off to the platform opener
+# instead of emitting an escape sequence nothing will handle. Over SSH from
+# iTerm2 the OSC would reach iTerm2, but a remote file:// path wouldn't resolve
+# there anyway.
 if [ "${TERM_PROGRAM:-}" != "iTerm.app" ]; then
+  [ "$(uname -s)" = Darwin ] && exec open "$arg"             # macOS default app
   command -v wslview >/dev/null 2>&1 && exec wslview "$arg"  # WSL (wslu)
   command -v xdg-open >/dev/null 2>&1 && exec xdg-open "$arg"
 fi

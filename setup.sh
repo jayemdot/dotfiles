@@ -28,7 +28,21 @@ git config --local core.hooksPath .githooks
 # --- stow --------------------------------------------------------------------
 # Run stow BEFORE mise install so ~/.config/mise/config.toml is in place.
 log "Stowing dotfiles into \$HOME"
-stow bat bin git mise nvim ssh tmux vim yazi zsh
+stow bat bin git iterm2 kitty mise nvim ssh tmux vim yazi zsh
+
+# --- iTerm2 default profile ---------------------------------------------------
+# The "dotfiles" Dynamic Profile (stowed from the iterm2 package, generated from
+# terminal/theme.toml) is made the default. Only while iTerm2 is not running —
+# a running iTerm2 rewrites its plist on quit and would drop the change.
+if [[ -d /Applications/iTerm.app ]]; then
+  iterm_guid=$(python3 -c 'import tomllib;print(tomllib.load(open("terminal/theme.toml","rb"))["iterm2"]["guid"])')
+  if pgrep -xq iTerm2; then
+    log "iTerm2 is running — set the 'dotfiles' profile as default in Settings > Profiles"
+  else
+    log "Setting iTerm2 default profile to 'dotfiles'"
+    defaults write com.googlecode.iterm2 "Default Bookmark Guid" -string "$iterm_guid"
+  fi
+fi
 
 # --- mise tools --------------------------------------------------------------
 # Installs everything pinned in mise/.config/mise/config.toml (Node, codex,

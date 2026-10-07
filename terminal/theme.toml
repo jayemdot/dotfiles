@@ -1,0 +1,63 @@
+# Terminal appearance — the single source of truth for BOTH kitty and iTerm2.
+#
+# Edit this file only, then regenerate:
+#     python3 terminal/generate.py
+#
+# Generated files (never edit by hand; the pre-commit hook rejects stale ones):
+#     kitty/.config/kitty/appearance.conf
+#     kitty/.config/kitty/{dark,light,no-preference}-theme.auto.conf
+#     iterm2/Library/Application Support/iTerm2/DynamicProfiles/dotfiles.json
+#     tmux/.tmux/theme.conf
+#
+# Only settings that both terminals understand live here. Everything is
+# explicit (no inheritance from an unmanaged iTerm2 profile), and nothing
+# refers to files outside this repo.
+
+[font]
+family     = "HackGen Console NF"       # kitty: family name
+postscript = "HackGenConsoleNF-Regular" # iTerm2: PostScript name
+size       = 16                         # points
+# Installed by the `font-hackgen-nerd` cask (Brewfile).
+
+[cursor]
+shape = "beam" # block | beam | underline
+blink = false
+
+[window]
+opacity = 0.70 # 1.0 = opaque
+blur    = 10   # macOS background blur radius (only when opacity < 1)
+
+[tmux]
+# tmux paints the active pane with this explicit background color. A cell with
+# an explicit color is opaque in kitty unless listed in
+# transparent_background_colors, so it is emitted there too.
+active_pane_bg = "#242424"
+
+# The OS light/dark appearance picks one of these. ANSI 0-15 are shared.
+[colors.dark]
+background           = "#242424"
+foreground           = "#dcdcdc"
+cursor               = "#e6e5e6"
+cursor_text          = "#000000"
+selection_background = "#b3d7ff"
+selection_foreground = "#000000"
+
+[colors.light]
+background           = "#fafafa"
+foreground           = "#101010"
+cursor               = "#000000"
+cursor_text          = "#ffffff"
+selection_background = "#b3d7ff"
+selection_foreground = "#000000"
+
+[colors]
+ansi = [
+  "#14191e", "#b43c2a", "#00c200", "#c7c400", # black red green yellow
+  "#2744c7", "#c040be", "#00c5c7", "#c7c7c7", # blue magenta cyan white
+  "#686868", "#dd7975", "#58e790", "#ece100", # bright …
+  "#a7abf2", "#e17ee1", "#60fdff", "#ffffff",
+]
+
+[iterm2]
+profile_name = "dotfiles"
+guid         = "2B94ED10-DE55-4A95-9EC0-CB3E5C436B61" # stable identity; never change

@@ -50,9 +50,9 @@ log "Enabling repo-local git hooks (.githooks)"
 git config --local core.hooksPath .githooks
 
 # --- stow ------------------------------------------------------------------------
-# Same package list as setup.sh; `brew` is macOS-only so it is not stowed here.
+# Same package list as setup.sh minus the macOS-only `brew` and `iterm2`.
 log "Stowing dotfiles into \$HOME"
-stow bat bin git mise nvim ssh tmux vim yazi zsh
+stow bat bin git kitty mise nvim ssh tmux vim yazi zsh
 
 # --- neovim (official tarball; apt's neovim is too old for lazy.nvim on 22.04) ---
 if ! command -v nvim >/dev/null 2>&1; then

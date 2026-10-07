@@ -67,7 +67,11 @@ if [[ -n $IS_MAC ]]; then
   alias bi='brew info'
   alias brltst='brew update && brew upgrade && brew cleanup && brew doctor && mas update'
   alias brcl='brew cleanup --prune=all'
-  alias brewdump='brew bundle dump --global --force --no-vscode --no-npm'
+  # brew bundle uses whatever uv/cargo it finds on PATH. `mise activate` puts
+  # mise's shims first, and a shim for a tool with no global mise version
+  # fails — the dump then silently drops entries (e.g. `uv "jupyterlab"`) or
+  # errors (cargo). Dump with the shims dir removed from PATH.
+  alias brewdump='PATH=${(j.:.)path:#$HOME/.local/share/mise/shims} brew bundle dump --global --force --no-vscode --no-npm'
 elif grep -qi microsoft /proc/version 2>/dev/null; then
   alias ls='ls --color=auto'
   alias o='explorer.exe .' # WSL: カレントを Windows エクスプローラで開く

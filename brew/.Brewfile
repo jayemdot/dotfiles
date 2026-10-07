@@ -55,6 +55,8 @@ brew "perl"
 brew "pkgconf"
 # Single-file executable tool for creating, reading and uploading PMTiles archives
 brew "pmtiles"
+# Paste PNG into files
+brew "pngpaste"
 # PDF rendering library (based on the xpdf-3.0 code base)
 brew "poppler"
 # Show ps output as a tree
@@ -101,10 +103,16 @@ brew "zoxide"
 brew "zsh-autosuggestions"
 # Fish shell like syntax highlighting for zsh
 brew "zsh-syntax-highlighting"
+# Memory training application
+cask "anki"
+# Japanese input method
+cask "azookey"
 # 3D creation suite
 cask "blender"
 # Anthropic's official Claude AI desktop app
 cask "claude"
+# Write, edit, and chat about your code with AI
+cask "cursor"
 # AI-powered translator
 cask "deepl"
 # App to build and share containerised applications and microservices
@@ -114,6 +122,8 @@ cask "figma"
 cask "font-hackgen-nerd"
 cask "font-ricty-diminished"
 cask "font-symbols-only-nerd-font"
+# Terminal emulator that uses platform-native UI and GPU acceleration
+cask "ghostty"
 # Free and open-source image editor
 cask "gimp"
 # Desktop client for GitHub repositories
@@ -128,6 +138,8 @@ cask "google-japanese-ime"
 cask "iterm2"
 # Keyboard customiser
 cask "karabiner-elements"
+# GPU-based terminal emulator
+cask "kitty"
 # Adaptive brightness for external displays
 cask "lunar"
 # Full TeX Live distribution without GUI applications
@@ -154,6 +166,8 @@ cask "readdle-spark"
 cask "rstudio"
 # Quicklook extension for source files
 cask "syntax-highlight"
+# Mesh VPN based on WireGuard
+cask "tailscale-app"
 # Open-source code editor
 cask "visual-studio-code"
 # Video communication and virtual meeting platform
@@ -161,8 +175,10 @@ cask "zoom"
 mas "GarageBand", id: 682658836
 mas "iMovie", id: 408981434
 mas "Keynote", id: 361285480
+mas "Kindle", id: 302584613
 mas "LINE", id: 539883307
 mas "Numbers", id: 361304891
 mas "Pages", id: 361309726
+mas "Remote Mouse", id: 403195710
 mas "Xcode", id: 497799835
 uv "jupyterlab"

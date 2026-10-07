@@ -113,6 +113,26 @@ python3 terminal/generate.py --check  # 生成物が最新か確認
 
 生成物: `kitty/.config/kitty/{appearance,*-theme.auto}.conf`、`iterm2/.../DynamicProfiles/dotfiles.json`、`tmux/.tmux/theme.conf`。生成物を手で編集したり、生成し忘れたままコミットしようとすると `.githooks/pre-commit` が止める。`theme.toml` に未知のキーや不正な値があれば生成自体がエラーになる。
 
+## nvim の Markdown 編集環境
+
+Markdown ファイルを開くと、左にエディタ（生テキスト）、右に整形済みプレビュー（画像も表示）が並ぶ。画像は kitty（tmux 経由でも可）で表示される。マスタは左のファイルだけで、右は書き込み不可の写し。
+
+| キー | 動作 |
+|------|------|
+| `<leader>mp` | 右分割プレビューの開閉（幅 120 桁以上なら自動で開く） |
+| `<leader>mb` / `<leader>mB` | ブラウザプレビューを開く / 閉じる（数式・Mermaid・スクロール同期） |
+| `<leader>mi` | クリップボードの画像を `assets/` に保存してリンクを挿入 |
+| `<leader>mx` | チェックボックスの切り替え |
+| `|` を入力 | 表を自動整列（日本語の表示幅に対応） |
+| `./` や `img/` を入力 | ファイルのあるディレクトリ基準でパスを補完 |
+| `<C-]>` / `gO` | リンク先へ移動 / 見出し一覧（marksman） |
+
+プラグインや nvim を更新したら動作確認を流す:
+
+```sh
+nvim --headless -c "luafile tests/nvim-markdown.lua"
+```
+
 ## Stow の使い方
 
 ```sh

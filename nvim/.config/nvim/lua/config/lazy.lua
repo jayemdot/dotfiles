@@ -7,6 +7,7 @@ vim.g.maplocalleader = "\\"
 require("config.options")
 require("config.keymaps")
 require("config.autocmds")
+require("config.lsp")
 
 -- Bootstrap lazy.nvim: on first launch, clone the stable branch into the data
 -- dir (~/.local/share/nvim/lazy/lazy.nvim). This lives outside the dotfiles
@@ -37,4 +38,7 @@ require("lazy").setup({
   install = { colorscheme = { "monokai", "habamax" } },
   -- Check for plugin updates in the background; don't nag on startup.
   checker = { enabled = true, notify = false },
+  -- No luarocks: nothing here needs a rock (image.nvim uses the ImageMagick
+  -- CLI), and lazy would otherwise build a private Lua toolchain (hererocks).
+  rocks = { enabled = false },
 })

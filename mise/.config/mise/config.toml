@@ -3,3 +3,8 @@ node = "lts"
 "npm:@google/gemini-cli" = "latest"
 "npm:@openai/codex" = "latest"
 pnpm = "11.1.3"
+# Markdown LSP for nvim (nvim/.config/nvim/lsp/marksman.lua). Pinned single-
+# binary GitHub release, managed here instead of Homebrew so the same version
+# installs on macOS and Ubuntu (Homebrew's marksman drags in a 640MB .NET
+# runtime; the release binary is self-contained).
+"aqua:artempyanykh/marksman" = "2026-02-08"

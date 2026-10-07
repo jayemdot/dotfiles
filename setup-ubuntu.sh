@@ -24,7 +24,7 @@ log "Installing apt packages"
 sudo apt-get update
 sudo apt-get install -y \
   zsh git git-lfs stow tmux curl unzip jq ca-certificates \
-  bat fd-find ripgrep poppler-utils \
+  bat fd-find ripgrep poppler-utils imagemagick \
   zsh-autosuggestions zsh-syntax-highlighting \
   language-pack-ja
 

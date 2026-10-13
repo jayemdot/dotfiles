@@ -18,6 +18,13 @@ opt.softtabstop = 2
 -- tmux client advertises the `cstyle` feature).
 opt.guicursor = "n-v-c-sm:block,i-ci-ve:ver25,r-cr-o:hor20,t:block-blinkon500-blinkoff500-TermCursor"
 
+-- Make stray whitespace visible: trailing spaces as `·` and non-breaking spaces
+-- as `␣` (colored in lua/plugins/colorscheme.lua). Tabs still look like plain
+-- whitespace — without a `tab:` entry 'list' would draw them as `^I`.
+-- (Markdown's two-space hard line break shows up as `··` too.)
+opt.list = true
+opt.listchars = { trail = "·", nbsp = "␣", tab = "  " }
+
 -- Read-encoding detection order for legacy Japanese files. Neovim is UTF-8
 -- internally, so `encoding` itself is left at its default; only this
 -- detection list is carried over from the old .vimrc.

@@ -28,6 +28,10 @@ return {
         hl.bg = "none"
         vim.api.nvim_set_hl(0, group, hl)
       end
+
+      -- 'listchars' markers (trailing spaces, nbsp; see lua/config/options.lua)
+      -- in Monokai pink: the scheme's default gray barely shows on #242424.
+      vim.api.nvim_set_hl(0, "Whitespace", { fg = "#F92772" })
     end,
   },
 }

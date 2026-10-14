@@ -9,8 +9,9 @@
 --
 -- Deliberately built only on core Neovim APIs and the *documented* APIs of the
 -- two plugins (render-markdown: `ignore`/`render_modes` options; image.nvim:
--- from_file / from_url / render / clear), so plugin upgrades can't silently
--- break the glue.
+-- from_file / render / clear), so plugin upgrades can't silently break the
+-- glue. Images are handed to image.nvim as single-frame PNGs we prepare
+-- ourselves (see to_png) — its own conversion breaks on animated WebP.
 --
 -- :MdPreview [toggle|open|close]   (mapped to <leader>mp in markdown buffers)
 
@@ -96,6 +97,57 @@ local function resolve(src, url)
   return vim.fs.normalize(vim.fs.dirname(vim.api.nvim_buf_get_name(src)) .. "/" .. url), false
 end
 
+local CACHE_DIR = vim.fn.stdpath("cache") .. "/mdpreview"
+
+-- Download a remote image once into the cache (keyed by URL).
+---@param cb fun(path: string?)
+local function fetch(url, cb)
+  local ext = url:match("%.(%w+)[?#]?[^/]*$") or "img"
+  local out = ("%s/%s.%s"):format(CACHE_DIR, vim.fn.sha256(url), ext:lower())
+  if vim.uv.fs_stat(out) then
+    return cb(out)
+  end
+  vim.fn.mkdir(CACHE_DIR, "p")
+  vim.system({ "curl", "-fsSL", "--max-time", "20", "-o", out, url }, {}, function(r)
+    vim.schedule(function()
+      cb(r.code == 0 and out or nil)
+    end)
+  end)
+end
+
+-- Turn any image into a single-frame PNG for image.nvim. image.nvim converts
+-- non-PNG files itself but only selects the first frame for GIFs, so an
+-- animated WebP (or AVIF/HEIC/multi-page TIFF) converts to out-0.png,
+-- out-1.png, … and its follow-up `identify` errors from an async callback.
+-- `file[0]` (ImageMagick's long-standing frame selector) avoids that. Results
+-- are cached by path + mtime + size.
+---@param cb fun(png: string?)
+local function to_png(path, cb)
+  if path:lower():match("%.png$") then
+    return cb(path)
+  end
+  local stat = vim.uv.fs_stat(path)
+  if not stat then
+    return cb(nil)
+  end
+  local key = vim.fn.sha256(("%s:%d:%d"):format(path, stat.mtime.sec, stat.size))
+  local out = ("%s/%s.png"):format(CACHE_DIR, key)
+  if vim.uv.fs_stat(out) then
+    return cb(out)
+  end
+  local magick = vim.fn.executable("magick") == 1 and "magick" or vim.fn.executable("convert") == 1 and "convert"
+  if not magick then
+    return cb(nil)
+  end
+  vim.fn.mkdir(CACHE_DIR, "p")
+  vim.system({ magick, path .. "[0]", out }, {}, function(r)
+    vim.schedule(function()
+      cb(r.code == 0 and vim.uv.fs_stat(out) and out or nil)
+    end)
+  end)
+end
+M._to_png = to_png -- exposed for tests/nvim-markdown.lua
+
 local function clear_images(st)
   for _, img in ipairs(st.images) do
     pcall(img.clear, img)
@@ -124,21 +176,27 @@ local function update_images(st, lines)
     return
   end
   for _, f in ipairs(found) do
-    local path, remote = resolve(st.src, f.url)
-    local opts = { window = st.win, buffer = st.buf, with_virtual_padding = true }
-    local function place(img)
-      if img and states[st.src] == st and st.image_sig == sig then
+    local function place(png)
+      -- Conversion/download is async: drop the result if the preview closed or
+      -- the set of images changed meanwhile.
+      if not png or states[st.src] ~= st or st.image_sig ~= sig or not valid_win(st.win) then
+        return
+      end
+      local okf, img = pcall(api.from_file, png, { window = st.win, buffer = st.buf, with_virtual_padding = true })
+      if okf and img then
         st.images[#st.images + 1] = img
-        img:render({ x = f.col, y = f.row })
+        pcall(img.render, img, { x = f.col, y = f.row })
       end
     end
+    local path, remote = resolve(st.src, f.url)
     if remote then
-      pcall(api.from_url, path, opts, place)
-    elseif vim.uv.fs_stat(path) then
-      local okf, img = pcall(api.from_file, path, opts)
-      if okf then
-        place(img)
-      end
+      fetch(path, function(local_path)
+        if local_path then
+          to_png(local_path, place)
+        end
+      end)
+    else
+      to_png(path, place)
     end
   end
 end

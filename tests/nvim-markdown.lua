@@ -144,6 +144,40 @@ if pbuf then
   check("preview closes cleanly", not vim.api.nvim_win_is_valid(pwin) and not vim.api.nvim_buf_is_valid(pbuf))
 end
 
+-- Images become single-frame PNGs before reaching image.nvim -----------------------
+-- (image.nvim's own conversion splits animated WebP into out-0/out-1.png and fails)
+if vim.fn.executable("magick") == 1 or vim.fn.executable("convert") == 1 then
+  local im = vim.fn.executable("magick") == 1 and { "magick" } or { "convert" }
+  local function run(args)
+    return vim.system(vim.list_extend(vim.deepcopy(im), args)):wait().code == 0
+  end
+  local a, b = dir .. "/img/a.png", dir .. "/img/b.png"
+  run({ "-size", "40x20", "xc:#66D9EF", a })
+  run({ "-size", "40x20", "xc:#F92772", b })
+  local cases = {
+    { "png (passed through)", a },
+    { "static webp", (function() run({ a, dir .. "/img/s.webp" }) return dir .. "/img/s.webp" end)() },
+    { "animated webp", (function() run({ "-delay", "50", a, b, "-loop", "0", dir .. "/img/anim.webp" }) return dir .. "/img/anim.webp" end)() },
+    { "animated gif", (function() run({ "-delay", "50", a, b, "-loop", "0", dir .. "/img/anim.gif" }) return dir .. "/img/anim.gif" end)() },
+    { "jpeg", (function() run({ a, dir .. "/img/c.jpg" }) return dir .. "/img/c.jpg" end)() },
+  }
+  for _, c in ipairs(cases) do
+    local out, done = nil, false
+    require("mdpreview")._to_png(c[2], function(p)
+      out, done = p, true
+    end)
+    wait(5000, function()
+      return done
+    end)
+    local identify = im[1] == "magick" and { "magick", "identify" } or { "identify" }
+    local frames = out and vim.system(vim.list_extend(identify, { "-format", "%m\\n", out }), { text = true }):wait().stdout or ""
+    frames = vim.split(vim.trim(frames), "\n", { trimempty = true })
+    check("image -> single-frame PNG: " .. c[1], out ~= nil and #frames == 1 and frames[1] == "PNG", vim.inspect({ out = out, frames = frames }))
+  end
+else
+  results[#results + 1] = "skip image conversion (ImageMagick not installed)"
+end
+
 -- Lists (bullets.vim) -------------------------------------------------------------
 vim.api.nvim_win_set_cursor(0, { vim.api.nvim_buf_line_count(src), 0 })
 vim.api.nvim_feedkeys(vim.keycode("A<CR>second<Esc>"), "x", false)

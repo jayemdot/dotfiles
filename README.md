@@ -46,7 +46,7 @@ tmux                     # tmux を起動
 | `brew/` | `~/.Brewfile` |
 | `git/` | `~/.gitconfig` |
 | `iterm2/` | `~/Library/Application Support/iTerm2/DynamicProfiles/dotfiles.json`（生成物） |
-| `kitty/` | `~/.config/kitty/`（`kitty.conf` 以外は生成物） |
+| `kitty/` | `~/.config/kitty/`（`appearance.conf` は生成物） |
 | `mise/` | `~/.config/mise/config.toml` |
 | `nvim/` | `~/.config/nvim/` |
 | `ssh/` | `~/.ssh/config` |
@@ -104,14 +104,14 @@ cd ~/dotfiles && ./setup-ubuntu.sh
 
 ## 端末の見た目（kitty / iTerm2 共通マスタ）
 
-フォント・配色・不透明度・カーソル形状は `terminal/theme.toml` が唯一のマスタ。ここだけを編集して生成する。
+フォント・配色・不透明度・カーソル形状は `terminal/theme.toml` が唯一のマスタ。ここだけを編集して生成する。配色は macOS のライト/ダークに関係なく常にダーク1組（tmux やエディタが暗い前提のため）。
 
 ```sh
 python3 terminal/generate.py          # 生成物を更新
 python3 terminal/generate.py --check  # 生成物が最新か確認
 ```
 
-生成物: `kitty/.config/kitty/{appearance,*-theme.auto}.conf`、`iterm2/.../DynamicProfiles/dotfiles.json`、`tmux/.tmux/theme.conf`。生成物を手で編集したり、生成し忘れたままコミットしようとすると `.githooks/pre-commit` が止める。`theme.toml` に未知のキーや不正な値があれば生成自体がエラーになる。
+生成物: `kitty/.config/kitty/appearance.conf`、`iterm2/.../DynamicProfiles/dotfiles.json`、`tmux/.tmux/theme.conf`。生成物を手で編集したり、生成し忘れたままコミットしようとすると `.githooks/pre-commit` が止める。`theme.toml` に未知のキーや不正な値があれば生成自体がエラーになる。
 
 ## nvim の Markdown 編集環境
 

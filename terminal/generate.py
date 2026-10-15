@@ -42,7 +42,7 @@ SCHEMA = {
     "cursor": {"shape", "blink"},
     "window": {"opacity", "blur"},
     "tmux": {"active_pane_bg"},
-    "colors": {"dark", "light", "ansi"},
+    "colors": {"background", "foreground", "cursor", "cursor_text", "selection_background", "selection_foreground", "ansi"},
     "iterm2": {"profile_name", "guid"},
 }
 
@@ -68,10 +68,8 @@ def load() -> dict:
     keys("theme.toml", t, set(SCHEMA))
     for section, want in SCHEMA.items():
         keys(f"[{section}]", t[section], want)
-    for mode in ("dark", "light"):
-        keys(f"[colors.{mode}]", t["colors"][mode], set(MODE_KEYS))
-        for k, v in t["colors"][mode].items():
-            color(f"[colors.{mode}] {k}", v)
+    for k in MODE_KEYS:
+        color(f"[colors] {k}", t["colors"][k])
     ansi = t["colors"]["ansi"]
     if not isinstance(ansi, list) or len(ansi) != 16:
         raise ThemeError("[colors] ansi: expected exactly 16 colors")
@@ -96,7 +94,7 @@ def kitty_appearance(t: dict) -> str:
     op = t["window"]["opacity"]
     lines = [
         f"# {HEADER}",
-        "# Included from kitty.conf. Colors live in the *-theme.auto.conf files.",
+        "# Included from kitty.conf.",
         f"font_family      {t['font']['family']}",
         "bold_font        auto",
         "italic_font      auto",
@@ -109,14 +107,8 @@ def kitty_appearance(t: dict) -> str:
         # tmux's explicit active-pane color would otherwise be fully opaque.
         f"transparent_background_colors {t['tmux']['active_pane_bg']}@{op:g}",
     ]
-    return "\n".join(lines) + "\n"
-
-
-def kitty_colors(t: dict, mode: str) -> str:
-    c = t["colors"][mode]
-    lines = [
-        f"# {HEADER}",
-        f"# kitty picks this file automatically when the OS appearance is {mode}.",
+    c = t["colors"]
+    lines += [
         f"background           {c['background']}",
         f"foreground           {c['foreground']}",
         f"cursor               {c['cursor']}",
@@ -124,7 +116,7 @@ def kitty_colors(t: dict, mode: str) -> str:
         f"selection_background {c['selection_background']}",
         f"selection_foreground {c['selection_foreground']}",
     ]
-    lines += [f"color{i:<2}              {v}" for i, v in enumerate(t["colors"]["ansi"])]
+    lines += [f"color{i:<2}              {v}" for i, v in enumerate(c["ansi"])]
     return "\n".join(lines) + "\n"
 
 
@@ -158,7 +150,7 @@ def iterm2_profile(t: dict) -> str:
         "Only The Default BG Color Uses Transparency": False,
         "Blur": op < 1,
         "Blur Radius": t["window"]["blur"],
-        "Use Separate Colors for Light and Dark Mode": True,
+        "Use Separate Colors for Light and Dark Mode": False,
         # Terminal behavior (iTerm2-only keys), pinned here so the profile does
         # not depend on whatever the unmanaged default profile happens to hold.
         "Mouse Reporting": True,
@@ -174,13 +166,12 @@ def iterm2_profile(t: dict) -> str:
         "selection_background": "Selection Color",
         "selection_foreground": "Selected Text Color",
     }
-    for mode, suffix in (("light", " (Light)"), ("dark", " (Dark)")):
-        c = t["colors"][mode]
-        for key, name in names.items():
-            p[name + suffix] = iterm_color(c[key])
-        p["Bold Color" + suffix] = iterm_color(c["foreground"])
-        for i, v in enumerate(t["colors"]["ansi"]):
-            p[f"Ansi {i} Color{suffix}"] = iterm_color(v)
+    c = t["colors"]
+    for key, name in names.items():
+        p[name] = iterm_color(c[key])
+    p["Bold Color"] = iterm_color(c["foreground"])
+    for i, v in enumerate(c["ansi"]):
+        p[f"Ansi {i} Color"] = iterm_color(v)
     doc = {"_comment": HEADER, "Profiles": [p]}
     return json.dumps(doc, indent=2, ensure_ascii=False) + "\n"
 
@@ -198,10 +189,6 @@ def tmux_theme(t: dict) -> str:
 def outputs(t: dict) -> dict[Path, str]:
     return {
         KITTY_DIR / "appearance.conf": kitty_appearance(t),
-        KITTY_DIR / "dark-theme.auto.conf": kitty_colors(t, "dark"),
-        KITTY_DIR / "light-theme.auto.conf": kitty_colors(t, "light"),
-        # macOS always reports light or dark; fall back to dark just in case.
-        KITTY_DIR / "no-preference-theme.auto.conf": kitty_colors(t, "dark"),
         ITERM2_PROFILE: iterm2_profile(t),
         TMUX_THEME: tmux_theme(t),
     }

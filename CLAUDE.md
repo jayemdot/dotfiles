@@ -34,7 +34,7 @@ Stow creates symlinks in `$HOME` pointing into this repo. For example, `zsh/.zsh
 | `brew/` | `~/.Brewfile` |
 | `git/` | `~/.gitconfig` |
 | `iterm2/` | `~/Library/Application Support/iTerm2/DynamicProfiles/dotfiles.json` (generated) |
-| `kitty/` | `~/.config/kitty/` (all but `kitty.conf` generated) |
+| `kitty/` | `~/.config/kitty/` (`appearance.conf` generated) |
 | `mise/` | `~/.config/mise/config.toml` |
 | `nvim/` | `~/.config/nvim/` |
 | `ssh/` | `~/.ssh/config` |
@@ -73,7 +73,7 @@ A `post-commit` hook in `.githooks/post-commit` automatically pushes any changes
 
 ## Key configuration notes
 
-- **Terminal appearance has one master**: `terminal/theme.toml` (font, cursor, opacity/blur, light+dark colors, tmux active-pane bg). `terminal/generate.py` (stdlib-only, hard-fails on unknown keys/bad values) writes kitty's `appearance.conf` + `{dark,light,no-preference}-theme.auto.conf` (kitty switches with the macOS appearance), the iTerm2 Dynamic Profile `dotfiles.json` (fully explicit — no `Dynamic Profile Parent`, so it never depends on the unmanaged iTerm2 plist; `setup.sh` makes it the default profile), and `tmux/.tmux/theme.conf`. **Never edit generated files or run `kitten themes`** (it would overwrite the symlinked auto.conf files); `.githooks/pre-commit` rejects stale/hand-edited output. kitty is the primary terminal (kitty graphics protocol for images in nvim/yazi through tmux); `kitty.conf` holds only behavior. No background image: it would live outside the repo.
+- **Terminal appearance has one master**: `terminal/theme.toml` (font, cursor, opacity/blur, **one dark palette**, tmux active-pane bg). The palette is dark regardless of the macOS appearance — tmux's active pane and the nvim colorscheme are dark, and a light palette (which kitty/iTerm2 picked in macOS Light mode) gave a black cursor on the dark pane and white inactive panes/window edges. `[colors] background` (inactive panes, edges) is slightly darker than `[tmux] active_pane_bg` so the focused pane stands out. `terminal/generate.py` (stdlib-only, hard-fails on unknown/missing keys and bad values) writes kitty's `appearance.conf` (no `*-theme.auto.conf`: those would re-introduce OS-appearance switching), the iTerm2 Dynamic Profile `dotfiles.json` (fully explicit — no `Dynamic Profile Parent`, so it never depends on the unmanaged iTerm2 plist; `setup.sh` makes it the default profile), and `tmux/.tmux/theme.conf`. **Never edit generated files or run `kitten themes`** (it writes `*-theme.auto.conf` files that override every color); `.githooks/pre-commit` rejects stale/hand-edited output. kitty is the primary terminal (kitty graphics protocol for images in nvim/yazi through tmux); `kitty.conf` holds behavior plus `macos_titlebar_color background` (title bar in the terminal color, not the system's white). No background image: it would live outside the repo.
 - **Shell**: zsh with `zsh-autosuggestions` and `zsh-syntax-highlighting` (installed via Homebrew at `/opt/homebrew/share/`).
 - **tmux prefix**: `Ctrl-\` (not the default `Ctrl-b`). Reload config with `prefix + r`.
 - **mise** manages Node.js (and globally-installed npm packages like `codex`, `gemini-cli`), plus pnpm/ruby/etc., via `mise/.config/mise/config.toml`. Stow must run before `mise install` so the config is in place — `setup.sh` handles this ordering. **Python is intentionally not in mise.**

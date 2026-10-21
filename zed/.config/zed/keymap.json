@@ -1,0 +1,16 @@
+// Zed user keymap (stowed from dotfiles/zed). Loaded on top of Zed's defaults.
+//
+// With "vim_mode": true, Zed's vim keymap rebinds some macOS/Emacs-style keys
+// in insert mode (assets/keymaps/vim.json, context "vim_mode == insert").
+// Restore the ones we want Emacs-style while typing — same as the nvim insert
+// keymaps (nvim/.config/nvim/lua/config/keymaps.lua). Normal mode keeps Vim's
+// meaning (e.g. ctrl-e scrolls).
+[
+  {
+    "context": "vim_mode == insert",
+    "bindings": {
+      // vim.json: "vim::InsertFromBelow". Same action/args as Zed's macOS default.
+      "ctrl-e": ["editor::MoveToEndOfLine", { "stop_at_soft_wraps": true }]
+    }
+  }
+]

@@ -28,7 +28,7 @@ git config --local core.hooksPath .githooks
 # --- stow --------------------------------------------------------------------
 # Run stow BEFORE mise install so ~/.config/mise/config.toml is in place.
 log "Stowing dotfiles into \$HOME"
-stow bat bin git iterm2 kitty mise nvim ssh tmux vim yazi zsh
+stow bat bin git iterm2 kitty mise nvim ssh tmux vim yazi zed zsh
 
 # --- iTerm2 default profile ---------------------------------------------------
 # The "dotfiles" Dynamic Profile (stowed from the iterm2 package, generated from

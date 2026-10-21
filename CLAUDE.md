@@ -10,7 +10,7 @@ This is a personal dotfiles repository managed with [GNU Stow](https://www.gnu.o
 
 Install all packages from the repo root:
 ```sh
-stow bat bin git iterm2 kitty mise nvim ssh tmux vim yazi zsh
+stow bat bin git iterm2 kitty mise nvim ssh tmux vim yazi zed zsh
 ```
 
 Install a single package:
@@ -41,6 +41,7 @@ Stow creates symlinks in `$HOME` pointing into this repo. For example, `zsh/.zsh
 | `tmux/` | `~/.tmux.conf`, `~/.tmux/theme.conf` (generated) |
 | `vim/` | `~/.vimrc`, `~/.vim/` |
 | `yazi/` | `~/.config/yazi/` |
+| `zed/` | `~/.config/zed/keymap.json` |
 | `zsh/` | `~/.zshrc` |
 
 ## Restoring a new machine
@@ -48,7 +49,7 @@ Stow creates symlinks in `$HOME` pointing into this repo. For example, `zsh/.zsh
 The repo ships three scripts:
 
 - `bootstrap.sh` — runs on a clean macOS. Installs Homebrew + Xcode CLT, installs `gh`, runs `gh auth login` (interactive), clones this private repo, and hands off to `setup.sh`.
-- `setup.sh` — runs from inside an already-cloned repo (macOS). Idempotent: `brew bundle`, TPM, `stow bat bin git iterm2 kitty mise nvim ssh tmux vim yazi zsh`, then `mise install` (Node + npm globals like `codex` / `gemini-cli` pinned in `mise/.config/mise/config.toml`).
+- `setup.sh` — runs from inside an already-cloned repo (macOS). Idempotent: `brew bundle`, TPM, `stow bat bin git iterm2 kitty mise nvim ssh tmux vim yazi zed zsh`, then `mise install` (Node + npm globals like `codex` / `gemini-cli` pinned in `mise/.config/mise/config.toml`).
 - `setup-ubuntu.sh` — the apt counterpart for Ubuntu (incl. WSL). Idempotent: apt packages (with `batcat`→`bat` / `fdfind`→`fd` shims in `~/.local/bin`), GitHub-release installs of neovim/yazi/glow into `~/.local/opt`, then the same TPM/hooks/stow/mise/uv flow. The `brew` stow package and `bootstrap.sh` are macOS-only.
 
 One-shot from a fresh terminal (recommended):
@@ -84,6 +85,7 @@ A `post-commit` hook in `.githooks/post-commit` automatically pushes any changes
 - **nvim Markdown environment** (left: raw editor, right: rendered preview with real images). Pieces: `lua/mdpreview/` (own module, core APIs only) opens a read-only scratch copy of the file in a right split, syncs it one way (left→right, changed-range diff) and scrolls it along; focus can never stay in it, so the file is the single master. `render-markdown.nvim` renders **only nofile buffers** (`ignore` = buftype ""), `render_modes = true` so typing on the left doesn't un-render the right. Because Neovim fires TextChanged/CursorMoved only for the *current* buffer, mdpreview re-fires them on the preview after each sync (same trick as render-markdown's own `:RenderMarkdown preview`) — without it the preview renders stale. Images: `image.nvim`'s documented API (`from_file`/`render`/`clear`) with every auto-integration disabled, drawn only when tmux's `#{client_termname}` (or `$TERM`) is kitty/ghostty; relative paths resolve against the file's directory. mdpreview hands image.nvim **single-frame PNGs it makes itself** (`magick 'file[0]'`, async, cached in `stdpath('cache')/mdpreview` by path+mtime+size; remote images downloaded with curl first) — image.nvim's own conversion only takes the first frame of GIFs, so an animated WebP split into out-0/out-1.png and errored from an async callback (uncatchable, "Press ENTER"). Also: `blink.cmp` (LSP/path/buffer; paths relative to the file, `<C-k>` left as kill-line), marksman via `lsp/marksman.lua` + `vim.lsp.enable` (binary pinned in mise; attaches to real files only), `vim-table-mode` (realign on `|` and InsertLeave; CJK display width), `bullets.vim` (default maps off — its insert `<C-d>` would shadow Emacs `<C-d>`), `live-preview.nvim` (browser: KaTeX/Mermaid/scroll sync), `img-clip.nvim` (`pngpaste`). Keys (markdown buffers): `<leader>mp` split preview (auto-opens when `columns >= 120`; `vim.g.mdpreview_auto = false` to disable), `<leader>mb`/`mB` browser preview, `<leader>mi` paste image, `<leader>mx` checkbox. No nvim-treesitter (its rewrite only supports latest nvim), so fenced code isn't language-highlighted. **Version policy**: plugins pinned to release tags (`version = "*"` / major) + `lazy-lock.json`; `rocks = { enabled = false }`; use `:Lazy install`/`restore`, not `sync` (sync also updates). **After updating plugins or nvim run `nvim --headless -c "luafile tests/nvim-markdown.lua"`** (27 checks incl. preview freshness, insert-mode rendering and image → single-frame PNG for webp/animated webp/gif/jpeg; exit 1 on failure).
 - **vim** is retained as a fallback (`vim/` package, `~/.vimrc`, bundled Monokai colorscheme, Vimscript `C-k` kill-line). nvim (above) has superseded it as the default; vim is no longer wired to `EDITOR`.
 - **Cross-platform (macOS / Ubuntu / WSL)**: configs are OS-guarded rather than forked. `.zshrc` branches on `$OSTYPE` (`IS_MAC`): Homebrew paths/aliases are macOS-only; zsh plugins and fzf keybindings fall back to apt locations; `o` maps to `open` / `explorer.exe` / `xdg-open`. The clipboard is unified behind `bin/clip-copy` (pbcopy → tmux `load-buffer -w` (OSC 52) → SSH OSC 52 → clip.exe → wl-copy/xclip), used by tmux copy-mode and the `here` alias — copying inside a remote tmux lands on the clipboard of the terminal you're looking at. `ssh/config` guards the Apple-only `UseKeychain` with `IgnoreUnknown`; `iterm-browser` falls back to `wslview`/`xdg-open` outside iTerm2.
+- **Zed**: only `keymap.json` is managed (`zed/`); `settings.json` (with `"vim_mode": true`) is still local. Zed's vim keymap rebinds macOS/Emacs keys in insert mode (`assets/keymaps/vim.json`, context `vim_mode == insert`: ctrl-e InsertFromBelow, ctrl-d Outdent, ctrl-k digraph, ctrl-p/n word completion); `keymap.json` restores **ctrl-e → `editor::MoveToEndOfLine`** (same args as Zed's macOS default) in insert mode only. Zed watches `~/.config/zed`, not the symlink target, so after editing the file in the repo restart Zed (or touch the symlink); Zed's keymap-editor UI may replace the symlink with a plain file on save.
 - **Locale**: `ja_JP.UTF-8` throughout; Japanese input is handled by Google Japanese IME.
 
 ## .gitignore

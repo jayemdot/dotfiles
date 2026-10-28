@@ -13,6 +13,13 @@ return {
       preset = "default",
       -- Keep <C-k> as kill-line rather than signature help.
       ["<C-k>"] = false,
+      -- Leave <Tab>/<S-Tab> to buffer keymaps (markdown: indent/outdent the
+      -- line, after/ftplugin/markdown.lua). blink re-applies its own buffer-local
+      -- maps on every InsertEnter, and its fallback runs a non-expr callback via
+      -- vim.schedule, i.e. *after* the keys typed next. Its Tab only jumps
+      -- snippet placeholders, and no source here produces snippets.
+      ["<Tab>"] = false,
+      ["<S-Tab>"] = false,
     },
     sources = { default = { "lsp", "path", "buffer" } },
     completion = { documentation = { auto_show = true } },

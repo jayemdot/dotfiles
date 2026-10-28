@@ -184,6 +184,31 @@ vim.api.nvim_feedkeys(vim.keycode("A<CR>second<Esc>"), "x", false)
 local last = vim.api.nvim_buf_get_lines(src, -2, -1, false)[1]
 check("<CR> continues a bullet list", last == "- second", vim.inspect(last))
 
+-- Tab / S-Tab / C-i shift the line by exactly 2 while typing ----------------------
+local function typed(start_line, keys)
+  local n = vim.api.nvim_buf_line_count(src)
+  vim.api.nvim_buf_set_lines(src, n, n, false, { start_line })
+  vim.api.nvim_win_set_cursor(0, { n + 1, 0 })
+  vim.api.nvim_feedkeys(vim.keycode(keys), "x", false)
+  local got = vim.api.nvim_buf_get_lines(src, n, n + 1, false)[1]
+  vim.api.nvim_buf_set_lines(src, n, n + 1, false, {})
+  return got
+end
+local tab_cases = {
+  -- name, starting line, keys typed (A = append at end), expected line
+  { "Tab indents +2, cursor stays (X lands at end)", "- item", "A<Tab>X<Esc>", "  - itemX" },
+  { "C-i indents like Tab", "- item", "A<C-i><Esc>", "  - item" },
+  { "S-Tab outdents -2", "    - item", "A<S-Tab><Esc>", "  - item" },
+  { "S-Tab at column 0 is a no-op", "- item", "A<S-Tab><Esc>", "- item" },
+  { "S-Tab right after typing 0 keeps the 0", "  - item", "A 10<S-Tab><Esc>", "- item 10" },
+  { "odd indent shifts by exactly 2 (no rounding)", "   1. x", "A<Tab><Esc>", "     1. x" },
+  { "cursor mid-line: X inserted at the same spot", "- abcd", "0llla<Tab>X<Esc>", "  - abXcd" },
+}
+for _, c in ipairs(tab_cases) do
+  local got = typed(c[2], c[3])
+  check("indent keys: " .. c[1], got == c[4], ("expected %q, got %q"):format(c[4], got))
+end
+
 -- Tables (vim-table-mode, Japanese display width) ---------------------------------
 local tl = vim.api.nvim_buf_line_count(src)
 vim.api.nvim_buf_set_lines(src, tl, tl, false, { "", "| 名前 | x |", "|---|---|", "| a | 日本語テキスト |" })

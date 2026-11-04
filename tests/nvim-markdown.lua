@@ -228,6 +228,72 @@ end
 local aligned = bar_cols(rows[1]) == bar_cols(rows[2]) and bar_cols(rows[2]) == bar_cols(rows[3])
 check("table realigns by display width (日本語)", aligned, table.concat(rows, " / "))
 
+-- IME: non-insert contexts switch the macOS input source to ABC ---------------------
+-- A fake `inputsource` first on PATH records requests, so the real input source
+-- is never touched by this test.
+do
+  local ime = require("config.ime")
+  local fake = dir .. "/fakebin"
+  vim.fn.mkdir(fake, "p")
+  vim.fn.writefile({
+    "#!/bin/sh",
+    'D=$(dirname "$0")',
+    'if [ $# -eq 0 ]; then cat "$D/current"; else echo "select $1" >> "$D/log"; fi',
+  }, fake .. "/inputsource")
+  vim.fn.setfperm(fake .. "/inputsource", "rwxr-xr-x")
+  local saved_path, saved_has_ui = vim.env.PATH, ime.has_ui
+  vim.env.PATH = fake .. ":" .. saved_path
+  local function scenario(current, trigger)
+    vim.fn.writefile({ current }, fake .. "/current")
+    vim.fn.delete(fake .. "/log")
+    trigger()
+    wait(1500, function()
+      return vim.uv.fs_stat(fake .. "/log") ~= nil
+    end)
+    wait(200)
+    local log = vim.uv.fs_stat(fake .. "/log") and vim.fn.readfile(fake .. "/log") or {}
+    return table.concat(log, ";")
+  end
+  local JA, SEL = "com.apple.inputmethod.Kotoeri.KanaTyping.Japanese", "select " .. ime.ASCII
+
+  ime.has_ui = function()
+    return false
+  end
+  check("IME: headless nvim never switches", scenario(JA, function()
+    vim.api.nvim_exec_autocmds("InsertLeave", {})
+  end) == "")
+
+  ime.has_ui = function()
+    return true
+  end
+  check("IME: leaving insert mode switches to ABC", scenario(JA, function()
+    vim.api.nvim_feedkeys(vim.keycode("i<Esc>"), "x", false)
+  end) == SEL)
+  check("IME: already ABC -> no switch", scenario(ime.ASCII, function()
+    vim.api.nvim_feedkeys(vim.keycode("i<Esc>"), "x", false)
+  end) == "")
+  check("IME: leaving the command line switches", scenario(JA, function()
+    vim.api.nvim_exec_autocmds("CmdlineLeave", {})
+  end) == SEL)
+  check("IME: focus regained in normal mode switches", scenario(JA, function()
+    vim.api.nvim_exec_autocmds("FocusGained", {})
+  end) == SEL)
+  -- Focus regained while typing: count only what the FocusGained handler does
+  -- (feedkeys leaves insert mode afterwards, which is a legitimate switch).
+  local calls, real = 0, ime.to_ascii
+  ime.to_ascii = function()
+    calls = calls + 1
+  end
+  _G.__ime_probe = function()
+    vim.api.nvim_exec_autocmds("FocusGained", {})
+  end
+  vim.api.nvim_feedkeys(vim.keycode("a<Cmd>lua _G.__ime_probe()<CR><Esc>"), "x", false)
+  ime.to_ascii = real
+  check("IME: focus regained while typing leaves it alone", calls == 0, "calls=" .. calls)
+
+  ime.has_ui, vim.env.PATH = saved_has_ui, saved_path
+end
+
 -- Browser preview server -------------------------------------------------------------
 LivePreview.config.browser = "true" -- don't open a browser during the test
 vim.cmd("LivePreview start")

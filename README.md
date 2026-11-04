@@ -114,6 +114,10 @@ python3 terminal/generate.py --check  # 生成物が最新か確認
 
 生成物: `kitty/.config/kitty/appearance.conf`、`iterm2/.../DynamicProfiles/dotfiles.json`、`tmux/.tmux/theme.conf`。生成物を手で編集したり、生成し忘れたままコミットしようとすると `.githooks/pre-commit` が止める。`theme.toml` に未知のキーや不正な値があれば生成自体がエラーになる。
 
+## nvim と日本語入力
+
+nvim で挿入モードやコマンドラインを抜けると、入力ソースが自動で英数（ABC）に切り替わる。日本語入力がオンのままでもノーマルモードのコマンドが効く。切り替えには `tools/inputsource.swift`（Apple の API のみの小さな CLI）を使い、`setup.sh` が `~/.local/bin` にビルドする。
+
 ## nvim の Markdown 編集環境
 
 Markdown ファイルを開くと、左にエディタ（生テキスト）、右に整形済みプレビュー（画像も表示）が並ぶ。画像は kitty（tmux 経由でも可）で表示される。マスタは左のファイルだけで、右は書き込み不可の写し。

@@ -30,6 +30,18 @@ git config --local core.hooksPath .githooks
 log "Stowing dotfiles into \$HOME"
 stow bat bin git iterm2 kitty mise nvim ssh tmux vim yazi zed zsh
 
+# --- inputsource (macOS input-source CLI) -------------------------------------
+# Built from tools/inputsource.swift (Apple's TIS API only, no third-party
+# code). nvim's lua/config/ime.lua calls it to switch the Japanese IME back to
+# ABC when leaving insert mode. Rebuilt on every run (cheap, idempotent).
+if command -v swiftc &>/dev/null; then
+  log "Building inputsource into ~/.local/bin"
+  mkdir -p "$HOME/.local/bin"
+  swiftc -O tools/inputsource.swift -o "$HOME/.local/bin/inputsource"
+else
+  log "swiftc not found — skipping inputsource (nvim won't switch the IME)"
+fi
+
 # --- iTerm2 default profile ---------------------------------------------------
 # The "dotfiles" Dynamic Profile (stowed from the iterm2 package, generated from
 # terminal/theme.toml) is made the default. Only while iTerm2 is not running —

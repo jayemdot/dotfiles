@@ -6,6 +6,7 @@ vim.g.maplocalleader = "\\"
 -- Editor options and keymaps (ported from the old .vimrc). Loaded before plugins.
 require("config.options")
 require("config.keymaps")
+require("config.ime")
 require("config.autocmds")
 require("config.lsp")
 

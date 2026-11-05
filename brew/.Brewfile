@@ -63,8 +63,6 @@ brew "poppler"
 brew "pstree"
 # Interpreted, interactive, object-oriented programming language
 brew "python@3.11"
-# Python interface to Tcl/Tk
-brew "python-tk@3.11"
 # Tools for and transforming and inspecting PDF files
 brew "qpdf"
 # Software environment for statistical computing
@@ -105,8 +103,6 @@ brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
 # Memory training application
 cask "anki"
-# Japanese input method
-cask "azookey"
 # 3D creation suite
 cask "blender"
 # Anthropic's official Claude AI desktop app
@@ -170,6 +166,10 @@ cask "syntax-highlight"
 cask "tailscale-app"
 # Open-source code editor
 cask "visual-studio-code"
+# Multimedia player
+cask "vlc"
+# Multiplayer code editor
+cask "zed"
 # Video communication and virtual meeting platform
 cask "zoom"
 mas "GarageBand", id: 682658836

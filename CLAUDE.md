@@ -52,6 +52,8 @@ The repo ships three scripts:
 - `setup.sh` — runs from inside an already-cloned repo (macOS). Idempotent: `brew bundle`, TPM, `stow bat bin git iterm2 kitty mise nvim ssh tmux vim yazi zed zsh`, then `mise install` (Node + npm globals like `codex` / `gemini-cli` pinned in `mise/.config/mise/config.toml`).
 - `setup-ubuntu.sh` — the apt counterpart for Ubuntu (incl. WSL). Idempotent: apt packages (with `batcat`→`bat` / `fdfind`→`fd` shims in `~/.local/bin`), GitHub-release installs of neovim/yazi/glow into `~/.local/opt`, then the same TPM/hooks/stow/mise/uv flow. The `brew` stow package and `bootstrap.sh` are macOS-only.
 
+Apps that can't be automated (login-gated downloads, Homebrew-disabled casks, not on the Mac App Store) are recorded in `setup.sh`'s `manual_apps` array (`"<app path>|<download page>|<reason>"`); setup lists the missing ones at the end. Currently: Meta's Muse (`/Applications/Muse.app`, bundle `com.meta.endo`; cask `muse` disabled 2026-10-01 for needing a signed per-user download URL — the endpoint returns 403 without login). Never put download credentials or signed URLs in the repo (it is public). Not to be confused with Meta's `muse-code` cask (terminal coding agent), which is installable normally.
+
 One-shot from a fresh terminal (recommended):
 
 ```sh

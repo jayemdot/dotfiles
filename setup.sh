@@ -81,6 +81,20 @@ if command -v uv &>/dev/null; then
   uv python install 3.14 --default --preview-features python-install-default
 fi
 
+# --- Apps that can't be installed automatically --------------------------------
+# Not installable via Homebrew (or disabled there) nor the Mac App Store — e.g.
+# the download needs a login. Listed here so a new machine reports what is
+# missing; each of these updates itself after the first manual install.
+#   "<app path>|<download page>|<why it is manual>"
+manual_apps=(
+  "/Applications/Muse.app|https://muse.ai/|Meta Muse: login-gated signed download; Homebrew cask 'muse' disabled 2026-10-01"
+)
+missing_apps=()
+for entry in "${manual_apps[@]}"; do
+  IFS='|' read -r app url why <<<"$entry"
+  [[ -d "$app" ]] || missing_apps+=("     - ${app##*/}: $url  ($why)")
+done
+
 log "Setup complete."
 cat <<'EOF'
 
@@ -91,3 +105,7 @@ Next steps:
        ssh-keygen -t ed25519 -C "<your-email>"
        gh ssh-key add ~/.ssh/id_ed25519.pub
 EOF
+if ((${#missing_apps[@]})); then
+  echo "  4. Install these apps by hand (not automatable; they self-update afterwards):"
+  printf '%s\n' "${missing_apps[@]}"
+fi

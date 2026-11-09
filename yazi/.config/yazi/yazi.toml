@@ -30,14 +30,16 @@ prepend_fetchers = [
 ]
 
 [opener]
-# Open in iTerm2's built-in browser (WKWebView) — gives a real PDF viewer with
-# zoom and page navigation. `iterm-browser` lives in the `bin` stow package.
-iterm-browser = [
-  { run = 'for f in "$@"; do iterm-browser "$f"; done', desc = "iTerm2 browser", block = true },
+# Enter on a PDF opens it in Google Chrome (zoom, page navigation, search).
+# Selected files are passed with `%s` (all) / `%s1` (first). yazi runs
+# `sh -c <run>` with NO positional args, so the old "$@" form silently expands
+# to nothing — that is why the previous iTerm2-browser opener stopped working.
+pdf = [
+  { run = 'open -a "Google Chrome" %s', desc = "Google Chrome", for = "macos" },
+  { run = "xdg-open %s1",                desc = "Open",          for = "linux", orphan = true },
 ]
 
 [open]
 prepend_rules = [
-  # Enter on a PDF opens it in the iTerm2 browser instead of Preview.app.
-  { mime = "application/pdf", use = "iterm-browser" },
+  { mime = "application/pdf", use = "pdf" },
 ]

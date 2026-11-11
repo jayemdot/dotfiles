@@ -1,9 +1,10 @@
 -- Keep normal-mode commands working with the Japanese IME on.
 --
 -- With the IME in kana/romaji mode, keystrokes go into IME composition and
--- never reach nvim, so `j`, `dd`, `:w`… do nothing. Whenever nvim ends up in a
--- non-insert context — leaving insert mode or the command line, regaining focus
--- or starting in normal mode — switch the macOS input source to ABC.
+-- never reach nvim, so `j`, `dd`, `:w`… do nothing. Whenever nvim ends up in
+-- normal (or another non-typing) mode — after leaving insert mode or the
+-- command line, regaining focus or starting up — switch the macOS input
+-- source to ABC. Typing modes are never touched (see settle_then_ascii).
 --
 -- Uses `inputsource` (tools/inputsource.swift, built into ~/.local/bin by
 -- setup.sh; only Apple's TIS API). Looked up at call time, so it silently does
@@ -30,15 +31,25 @@ function M.to_ascii()
   end)
 end
 
-local group = vim.api.nvim_create_augroup("ime_ascii", { clear = true })
-vim.api.nvim_create_autocmd({ "InsertLeave", "CmdlineLeave" }, { group = group, callback = M.to_ascii })
-vim.api.nvim_create_autocmd({ "FocusGained", "VimEnter" }, {
-  group = group,
-  callback = function()
-    if vim.api.nvim_get_mode().mode:sub(1, 1) ~= "i" then
+-- Decide once the event has settled, not when it fires: mappings pass through
+-- other modes while the user stays in insert mode — bullets.vim's <CR> runs
+-- `<C-R>=…` (an expression command-line, so CmdlineLeave fires on every
+-- newline in a markdown list), `<C-o>:cmd` hops out and back. Switching then
+-- would kick the user out of kana input mid-sentence. So: schedule, then only
+-- switch if nvim is really outside insert / replace / command-line / terminal.
+local function settle_then_ascii()
+  vim.schedule(function()
+    local mode = vim.api.nvim_get_mode().mode:sub(1, 1)
+    if mode ~= "i" and mode ~= "R" and mode ~= "c" and mode ~= "t" then
       M.to_ascii()
     end
-  end,
+  end)
+end
+
+local group = vim.api.nvim_create_augroup("ime_ascii", { clear = true })
+vim.api.nvim_create_autocmd({ "InsertLeave", "CmdlineLeave", "FocusGained", "VimEnter" }, {
+  group = group,
+  callback = settle_then_ascii,
 })
 
 return M

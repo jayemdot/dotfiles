@@ -291,6 +291,32 @@ do
   ime.to_ascii = real
   check("IME: focus regained while typing leaves it alone", calls == 0, "calls=" .. calls)
 
+  -- Typing must never be interrupted: mappings that briefly pass through other
+  -- modes while the user stays in insert mode must not switch the IME.
+  local function calls_while_typing(start_line, keys)
+    local n = vim.api.nvim_buf_line_count(src)
+    vim.api.nvim_buf_set_lines(src, n, n, false, { start_line })
+    vim.api.nvim_win_set_cursor(0, { n + 1, 0 })
+    local count, at_probe, real_to_ascii = 0, nil, ime.to_ascii
+    ime.to_ascii = function()
+      count = count + 1
+    end
+    _G.__ime_typing_probe = function()
+      vim.wait(200) -- let scheduled IME decisions run while still in insert mode
+      at_probe = count
+    end
+    vim.api.nvim_feedkeys(vim.keycode(keys .. "<Cmd>lua _G.__ime_typing_probe()<CR><Esc>"), "x", false)
+    ime.to_ascii = real_to_ascii
+    local lines = vim.api.nvim_buf_get_lines(src, n, -1, false)
+    vim.api.nvim_buf_set_lines(src, n, -1, false, {})
+    return at_probe, lines
+  end
+  local c1, l1 = calls_while_typing("- item", "A<CR>next")
+  check("IME: Enter in a markdown list keeps the IME (bullets' <C-R>=)", c1 == 0 and l1[2] == "- next",
+    ("calls=%s lines=%s"):format(tostring(c1), vim.inspect(l1)))
+  local c2 = calls_while_typing("text", "A<C-o>:let g:__ime_x = 1<CR>")
+  check("IME: <C-o>:cmd from insert keeps the IME", c2 == 0, "calls=" .. tostring(c2))
+
   ime.has_ui, vim.env.PATH = saved_has_ui, saved_path
 end
 
